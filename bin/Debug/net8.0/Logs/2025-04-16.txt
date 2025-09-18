@@ -1,0 +1,17 @@
+16-04-2025 14:38:08: databaseconnection
+16-04-2025 14:38:09: ----entry----
+16-04-2025 14:38:09: ConnectionOpen
+16-04-2025 14:38:36: databaseconnection
+16-04-2025 14:38:36: ----entry----
+16-04-2025 14:38:36: ConnectionOpen
+16-04-2025 14:39:20: databaseconnection
+16-04-2025 14:39:20: ----entry----
+16-04-2025 14:39:20: ConnectionOpen
+16-04-2025 14:41:00: databaseconnection
+16-04-2025 14:41:00: ----entry----
+16-04-2025 14:41:00: ConnectionOpen
+16-04-2025 14:42:37: databaseconnection
+16-04-2025 14:42:37: ----entry----
+16-04-2025 14:42:37: ConnectionOpen
+16-04-2025 14:45:39: databaseconnection
+16-04-2025 14:45:39: ---Entrymethod----

@@ -1,0 +1,107 @@
+[
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetAllCallDetail",
+    "RelativePath": "app/api/v1/ivr/getallcalldetails",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetAll_CallTransferDetails",
+    "RelativePath": "app/api/v1/ivr/getallCalltranferdetails",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetCallDetails",
+    "RelativePath": "app/api/v1/ivr/getcalldetails",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Caller_id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetCallTransferDetails",
+    "RelativePath": "app/api/v1/ivr/getcalltranferdetails",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Caller_id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "getcalltranferdetailsbyagentid",
+    "RelativePath": "app/api/v1/ivr/getcalltranferdetailsbyagentid",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "agent_id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "testsample",
+    "RelativePath": "app/api/v1/ivr/GETDATA",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "conversationID",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPI.Controllers.WeatherForecastController",
+    "Method": "Get",
+    "RelativePath": "WeatherForecast",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[PushAPI.WeatherForecast, Call_Details_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetWeatherForecast"
+  }
+]

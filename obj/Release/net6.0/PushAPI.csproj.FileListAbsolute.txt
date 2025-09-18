@@ -1,0 +1,160 @@
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\appsettings.Development.json
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\appsettings.json
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\PushAPI.exe
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\PushAPI.deps.json
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\PushAPI.runtimeconfig.json
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\PushAPI.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\PushAPI.pdb
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\Microsoft.OpenApi.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\Newtonsoft.Json.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\RestSharp.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.csproj.AssemblyReference.cache
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.GeneratedMSBuildEditorConfig.editorconfig
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.AssemblyInfoInputs.cache
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.AssemblyInfo.cs
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.csproj.CoreCompileInputs.cache
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cs
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cache
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\staticwebassets.build.json
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\staticwebassets.development.json
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\staticwebassets\msbuild.PushAPI.Microsoft.AspNetCore.StaticWebAssets.props
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\staticwebassets\msbuild.build.PushAPI.props
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\staticwebassets\msbuild.buildMultiTargeting.PushAPI.props
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\staticwebassets\msbuild.buildTransitive.PushAPI.props
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\staticwebassets.pack.json
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\scopedcss\bundle\PushAPI.styles.css
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.csproj.Up2Date
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\refint\PushAPI.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.pdb
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\PushAPI.genruntimeconfig.cache
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net6.0\ref\PushAPI.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\System.Data.SqlClient.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\runtimes\win-arm64\native\sni.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\runtimes\win-x64\native\sni.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\runtimes\win-x86\native\sni.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Nassit\PushAPI\PushAPI\bin\Release\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\appsettings.Development.json
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\appsettings.json
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.exe
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.deps.json
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.runtimeconfig.json
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.pdb
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\Microsoft.OpenApi.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\Newtonsoft.Json.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\RestSharp.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\System.Data.SqlClient.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win-arm64\native\sni.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win-x64\native\sni.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win-x86\native\sni.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.csproj.AssemblyReference.cache
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.GeneratedMSBuildEditorConfig.editorconfig
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.AssemblyInfoInputs.cache
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.AssemblyInfo.cs
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.csproj.CoreCompileInputs.cache
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cs
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cache
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets.build.json
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets.development.json
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.PushAPI.Microsoft.AspNetCore.StaticWebAssets.props
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.build.PushAPI.props
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.buildMultiTargeting.PushAPI.props
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.buildTransitive.PushAPI.props
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets.pack.json
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\scopedcss\bundle\PushAPI.styles.css
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.csproj.Up2Date
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\refint\PushAPI.dll
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.pdb
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.genruntimeconfig.cache
+E:\project\Nassit\IVR\PushAPIMobileNumber\obj\Release\net6.0\ref\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\appsettings.Development.json
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\appsettings.json
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.exe
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.deps.json
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.runtimeconfig.json
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\PushAPI.pdb
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\Microsoft.OpenApi.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\Newtonsoft.Json.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\RestSharp.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\System.Data.SqlClient.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win-arm64\native\sni.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win-x64\native\sni.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win-x86\native\sni.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\bin\Release\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.csproj.AssemblyReference.cache
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.GeneratedMSBuildEditorConfig.editorconfig
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.AssemblyInfoInputs.cache
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.AssemblyInfo.cs
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.csproj.CoreCompileInputs.cache
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cs
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cache
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets.build.json
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets.development.json
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.PushAPI.Microsoft.AspNetCore.StaticWebAssets.props
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.build.PushAPI.props
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.buildMultiTargeting.PushAPI.props
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets\msbuild.buildTransitive.PushAPI.props
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\staticwebassets.pack.json
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\scopedcss\bundle\PushAPI.styles.css
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.csproj.Up2Date
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\refint\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.pdb
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\PushAPI.genruntimeconfig.cache
+E:\project\Benz\finalsource\API _status_update\PushAPIMobileNumber\obj\Release\net6.0\ref\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\appsettings.Development.json
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\appsettings.json
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\PushAPI.exe
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\PushAPI.deps.json
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\PushAPI.runtimeconfig.json
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\PushAPI.pdb
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\Microsoft.OpenApi.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\Newtonsoft.Json.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\RestSharp.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\System.Data.SqlClient.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\runtimes\win-arm64\native\sni.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\runtimes\win-x64\native\sni.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\runtimes\win-x86\native\sni.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.csproj.AssemblyReference.cache
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.GeneratedMSBuildEditorConfig.editorconfig
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.AssemblyInfoInputs.cache
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.AssemblyInfo.cs
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.csproj.CoreCompileInputs.cache
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cs
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.MvcApplicationPartsAssemblyInfo.cache
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\staticwebassets.build.json
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\staticwebassets.development.json
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\staticwebassets\msbuild.PushAPI.Microsoft.AspNetCore.StaticWebAssets.props
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\staticwebassets\msbuild.build.PushAPI.props
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\staticwebassets\msbuild.buildMultiTargeting.PushAPI.props
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\staticwebassets\msbuild.buildTransitive.PushAPI.props
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\staticwebassets.pack.json
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\scopedcss\bundle\PushAPI.styles.css
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.csproj.Up2Date
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\refint\PushAPI.dll
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.pdb
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\PushAPI.genruntimeconfig.cache
+E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\obj\Release\net6.0\ref\PushAPI.dll

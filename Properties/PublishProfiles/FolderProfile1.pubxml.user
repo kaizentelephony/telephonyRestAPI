@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>E:\project\Benz\finalsource\API _status_update\EnrollmentStatus_API\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <History>False|2025-02-04T07:41:39.5917353Z;True|2024-08-09T14:50:05.1461561+05:30;True|2024-08-07T10:38:18.1408772+05:30;True|2024-08-07T09:26:04.4202867+05:30;True|2024-08-07T09:13:47.8538838+05:30;True|2024-08-07T07:06:14.6346950+05:30;True|2024-08-06T22:19:23.4526186+05:30;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

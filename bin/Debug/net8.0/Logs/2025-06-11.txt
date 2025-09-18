@@ -1,0 +1,23 @@
+11-06-2025 18:13:33: databaseconnection
+11-06-2025 18:13:34: ---Entrymethod----
+11-06-2025 18:14:17: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server)
+11-06-2025 18:22:36: databaseconnection
+11-06-2025 18:22:36: ---Entrymethod----
+11-06-2025 18:23:12: databaseconnection
+11-06-2025 18:23:12: ---Entrymethod----
+11-06-2025 18:23:12: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 18:23:16: 14
+11-06-2025 19:08:43: databaseconnection
+11-06-2025 19:08:44: ---Entrymethod----

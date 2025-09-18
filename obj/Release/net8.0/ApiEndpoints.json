@@ -1,0 +1,210 @@
+[
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "getcalltranferdetailsbyagentid",
+    "RelativePath": "api/v1/ivr/agenthistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "agent_id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetAllCallDetail",
+    "RelativePath": "api/v1/ivr/allcalls",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetallTransactionDetail",
+    "RelativePath": "api/v1/ivr/alltransaction",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetAll_CallTransferDetails",
+    "RelativePath": "api/v1/ivr/alltransfer",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetCallDetailsbycallerid",
+    "RelativePath": "api/v1/ivr/callerhistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Caller_id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "csvTransactionDetail",
+    "RelativePath": "api/v1/ivr/csvtransactiondetail",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "GetCallDetails",
+    "RelativePath": "api/v1/ivr/getcalldetails",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Caller_id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "UploadFile",
+    "RelativePath": "api/v1/ivr/outdial",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ContentType",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ContentDisposition",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Headers",
+        "Type": "Microsoft.AspNetCore.Http.IHeaderDictionary",
+        "IsRequired": false
+      },
+      {
+        "Name": "Length",
+        "Type": "System.Int64",
+        "IsRequired": false
+      },
+      {
+        "Name": "Name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FileName",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "FileDownload",
+    "RelativePath": "api/v1/ivr/savefile",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Unique_id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "TodayCALLDETAILS",
+    "RelativePath": "api/v1/ivr/TodaywisecallDetails",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "UpdateUniqueIds",
+    "RelativePath": "api/v1/ivr/updateuniqueidbycalldetails",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "PushAPI.Model.TBL_CALLDETAILS\u002Bcalldetails",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPIContractNumber.ivrController",
+    "Method": "UpdateUniqueIdbycalltransferdetials",
+    "RelativePath": "api/v1/ivr/updateuniqueidbycalltransferdetails",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "PushAPI.Model.TBL_CALLDETAILS\u002Bcalldetails",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PushAPI.Controllers.WeatherForecastController",
+    "Method": "Get",
+    "RelativePath": "WeatherForecast",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[PushAPI.WeatherForecast, Call_Details_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetWeatherForecast"
+  }
+]

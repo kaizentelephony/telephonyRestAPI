@@ -1,0 +1,13 @@
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\PushAPI.exe
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\appsettings.Development.json
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\appsettings.json
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\PushAPI.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\PushAPI.deps.json
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\PushAPI.runtimeconfig.json
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\PushAPI.pdb
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\Microsoft.OpenApi.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\Newtonsoft.Json.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\RestSharp.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
+E:\project\Nassit\PushAPI\PushAPI\obj\Release\net8.0\win-x86\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerUI.dll

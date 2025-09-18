@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "I2Xfs4gYuRTFAoagxhCInMWQN3rNDwCJII/baoJGDAA=",
+  "Source": "Call_Details_API",
+  "BasePath": "_content/Call_Details_API",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

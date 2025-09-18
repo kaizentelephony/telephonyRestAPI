@@ -1,0 +1,199 @@
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\appsettings.Development.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\appsettings.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Call_Details_API.staticwebassets.endpoints.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Call_Details_API.exe
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Call_Details_API.deps.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Call_Details_API.runtimeconfig.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Call_Details_API.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Call_Details_API.pdb
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Microsoft.OpenApi.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Newtonsoft.Json.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\RestSharp.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\System.Data.SqlClient.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\runtimes\win-arm64\native\sni.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\runtimes\win-x64\native\sni.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\runtimes\win-x86\native\sni.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\bin\Release\net8.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.AssemblyReference.cache
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfoInputs.cache
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfo.cs
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.CoreCompileInputs.cache
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cs
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cache
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\scopedcss\bundle\Call_Details_API.styles.css
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\staticwebassets.development.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\staticwebassets.build.endpoints.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\staticwebassets.upToDateCheck.txt
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Det.607F1950.Up2Date
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\refint\Call_Details_API.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.pdb
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\Call_Details_API.genruntimeconfig.cache
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\ref\Call_Details_API.dll
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\rpswa.dswa.cache.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\rjimswa.dswa.cache.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\rjsmrazor.dswa.cache.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\rjsmcshtml.dswa.cache.json
+D:\projects\Benz\finalsource\API _status_update\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json.cache
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\appsettings.Development.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\appsettings.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.staticwebassets.endpoints.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.exe
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.deps.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.runtimeconfig.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.pdb
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\BouncyCastle.Cryptography.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Microsoft.OpenApi.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Newtonsoft.Json.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\RestSharp.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Renci.SshNet.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win-arm64\native\sni.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win-x64\native\sni.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win-x86\native\sni.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.AssemblyReference.cache
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.GeneratedMSBuildEditorConfig.editorconfig
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfoInputs.cache
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfo.cs
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.CoreCompileInputs.cache
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cs
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cache
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\scopedcss\bundle\Call_Details_API.styles.css
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json.cache
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.development.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.build.endpoints.json
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.upToDateCheck.txt
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Det.607F1950.Up2Date
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\refint\Call_Details_API.dll
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.pdb
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.genruntimeconfig.cache
+D:\UrBackUp\Critial\Sathiya\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\ref\Call_Details_API.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\appsettings.Development.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\appsettings.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.staticwebassets.endpoints.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.exe
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.deps.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.runtimeconfig.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Call_Details_API.pdb
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\BouncyCastle.Cryptography.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Microsoft.OpenApi.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Newtonsoft.Json.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\RestSharp.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Renci.SshNet.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win-arm64\native\sni.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win-x64\native\sni.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win-x86\native\sni.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\bin\Release\net8.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.AssemblyReference.cache
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.GeneratedMSBuildEditorConfig.editorconfig
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfoInputs.cache
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfo.cs
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.CoreCompileInputs.cache
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cs
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cache
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\scopedcss\bundle\Call_Details_API.styles.css
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json.cache
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.development.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.build.endpoints.json
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\staticwebassets.upToDateCheck.txt
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Det.607F1950.Up2Date
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\refint\Call_Details_API.dll
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.pdb
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\Call_Details_API.genruntimeconfig.cache
+D:\UrBackUp\Critial\Sathiya\New folder\CallDetails_API 2\CallDetails_API\obj\Release\net8.0\ref\Call_Details_API.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\appsettings.Development.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\appsettings.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Call_Details_API.staticwebassets.endpoints.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Call_Details_API.exe
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Call_Details_API.deps.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Call_Details_API.runtimeconfig.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Call_Details_API.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Call_Details_API.pdb
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\BouncyCastle.Cryptography.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Microsoft.OpenApi.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Newtonsoft.Json.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\RestSharp.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Renci.SshNet.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\runtimes\win-arm64\native\sni.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\runtimes\win-x64\native\sni.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\runtimes\win-x86\native\sni.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.AssemblyReference.cache
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.GeneratedMSBuildEditorConfig.editorconfig
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfoInputs.cache
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.AssemblyInfo.cs
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.csproj.CoreCompileInputs.cache
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cs
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.MvcApplicationPartsAssemblyInfo.cache
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\scopedcss\bundle\Call_Details_API.styles.css
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\staticwebassets.build.json.cache
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\staticwebassets.development.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\staticwebassets.build.endpoints.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\staticwebassets.upToDateCheck.txt
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Det.607F1950.Up2Date
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\refint\Call_Details_API.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.pdb
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\Call_Details_API.genruntimeconfig.cache
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\ref\Call_Details_API.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\rpswa.dswa.cache.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\rjimswa.dswa.cache.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\rjsmrazor.dswa.cache.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\obj\Release\net8.0\rjsmcshtml.dswa.cache.json
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\ClosedXML.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\ClosedXML.Parser.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\CsvHelper.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\DocumentFormat.OpenXml.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\DocumentFormat.OpenXml.Framework.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\ExcelNumberFormat.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.Logging.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\Microsoft.Extensions.Options.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.BarCodes.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.Charting.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.Cryptography.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.Quality.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.Shared.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.Snippets.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.System.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.WPFonts.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\PdfSharp.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\RBush.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\SixLabors.Fonts.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\System.IO.Packaging.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\UrBackUp\Critial\Bala\CallDetails_API\bin\Release\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll

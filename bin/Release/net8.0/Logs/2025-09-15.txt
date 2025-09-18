@@ -1,0 +1,13 @@
+15-09-2025 15:19:40: databaseconnection
+15-09-2025 15:19:40: ---Entrymethod----
+15-09-2025 15:19:41: Incorrect syntax near '='.
+15-09-2025 17:57:26: databaseconnection
+15-09-2025 17:57:42: databaseconnection
+15-09-2025 17:58:43: databaseconnection
+15-09-2025 17:58:43: --- Entry method: GetAll_CallTransferDetails ---
+15-09-2025 18:05:35: databaseconnection
+15-09-2025 18:05:35: --- Entry method: GetAll_CallTransferDetails ---
+15-09-2025 18:07:45: databaseconnection
+15-09-2025 18:07:45: --- Entry method: GetAll_CallTransferDetails ---
+15-09-2025 18:19:12: databaseconnection
+15-09-2025 18:19:13: --- Entry method: GetAll_CallTransferDetails ---
