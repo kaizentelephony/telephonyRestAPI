@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Campaign_Master.Model;
 using static PushAPI.Model.TBL_CALLDETAILS;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
