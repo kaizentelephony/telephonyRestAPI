@@ -1281,7 +1281,7 @@ namespace PushAPIContractNumber
   {
       try
       {
-          using (SqlConnection con = new SqlConnection(_dbconnection))
+          using (SqlConnection con = new SqlConnection(_dbConnection))
           {
               con.Open();
               string insertquery = "insert into TBL_CAMPAIGNMASTER (Campaign_Name,Status,Campaign_Description,Campaign_Type,Time_Zone,Start_Date," +
