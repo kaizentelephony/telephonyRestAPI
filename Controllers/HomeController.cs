@@ -1275,7 +1275,54 @@ namespace PushAPIContractNumber
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+  [HttpPost("InsertCM")]
+  public IActionResult InsertCampaignMaster([FromBody] CampaignMaster campaignMaster)
+  {
+      try
+      {
+          using (SqlConnection con = new SqlConnection(_dbconnection))
+          {
+              con.Open();
+              string insertquery = "insert into TBL_CAMPAIGNMASTER (Campaign_Name,Status,Campaign_Description,Campaign_Type,Time_Zone,Start_Date," +
+                  "End_Date,Dialing_Mode,Max_Concurrent_Calls,Call_duration_Limit,Retry_Attempts,Retry_Intervals,Teams,Max_Leads,Skill_Tags,Is_Recording)" +
+                  " values(@Campaign_Name,@Status,@Campaign_Description,@Campaign_Type,@Time_Zone,@Start_Date,@End_Date,@Dialing_Mode,@Max_Concurrent_Calls," +
+                  "@Call_duration_Limit,@Retry_Attempts,@Retry_Intervals,@Teams,@Max_Leads,@Skill_Tags,@Is_Recording)";
 
+              using (SqlCommand cmd = new SqlCommand(insertquery, con))
+              {
+                  cmd.Parameters.AddWithValue("@Campaign_Name", campaignMaster.Campaign_Name);
+                  cmd.Parameters.AddWithValue("@Status", campaignMaster.Status);
+                  cmd.Parameters.AddWithValue("@Campaign_Description", campaignMaster.Campaign_Description);
+                  cmd.Parameters.AddWithValue("@Campaign_Type", campaignMaster.Campaign_Type);
+                  cmd.Parameters.AddWithValue("@Time_Zone", campaignMaster.Time_Zone);
+                  cmd.Parameters.AddWithValue("@Start_Date", campaignMaster.Start_Date);
+                  cmd.Parameters.AddWithValue("@End_Date", campaignMaster.End_Date);
+                  cmd.Parameters.AddWithValue("@Dialing_Mode", campaignMaster.Dialing_Mode);
+                  cmd.Parameters.AddWithValue("@Max_Concurrent_Calls", campaignMaster.Max_Concurrent_Calls);
+                  cmd.Parameters.AddWithValue("@Call_duration_Limit", campaignMaster.Call_duration_Limit);
+                  cmd.Parameters.AddWithValue("@Retry_Attempts", campaignMaster.Retry_Attempts);
+                  cmd.Parameters.AddWithValue("@Retry_Intervals", campaignMaster.Retry_Intervals);
+                  cmd.Parameters.AddWithValue("@Teams", campaignMaster.Teams);
+                  cmd.Parameters.AddWithValue("@Max_Leads", campaignMaster.Max_Leads);
+                  cmd.Parameters.AddWithValue("@Skill_Tags", campaignMaster.Skill_Tags);
+                  cmd.Parameters.AddWithValue("@Is_Recording", campaignMaster.Is_Recording);
+                  int recording = cmd.ExecuteNonQuery();
+                  if (recording > 0)
+                  {
+                      return Ok("Data insert Successfully");
+                  }
+                  else
+                  {
+                      return StatusCode(500, "InsertFailed");
+                  }
+              }
+          }
+      }
+      catch (Exception ex)
+      {
+          return StatusCode(500, "Internal server error");
+      }
+  }
 
     }
 }
