@@ -530,69 +530,68 @@ namespace PushAPIContractNumber
         }
 
         [HttpPost("outdial")]
-        public IActionResult UploadFile([FromForm] IFormFile file)
+public IActionResult UploadFile([FromForm] IFormFile file)
+{
+    if (file == null || file.Length == 0)
+        return BadRequest("No file uploaded!");
+
+    // 1. Save Excel file to server uploads folder
+    Directory.CreateDirectory(UploadFolder);
+    string filePath = Path.Combine(UploadFolder, file.FileName);
+
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        file.CopyTo(stream);
+    }
+
+    // 2. Read Excel rows
+    var rows = FileDataReader.ReadTable(filePath).ToList();
+    if (!rows.Any())
+        return BadRequest("No data found in the Excel file.");
+
+    // 3. Generate .call files
+    var callFiles = new List<string>();
+    foreach (var arr in rows.Skip(1)) // Skip header
+    {
+        if (arr.Length < 2) continue;
+
+        string callFilePath = Path.Combine(UploadFolder, arr[0] + ".call");
+        System.IO.File.WriteAllLines(callFilePath, new[]
         {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded!");
+            $"Channel:PJSIP/{arr[0]}@out",
+            "WaitTime:30",
+            "Maxretries:0",
+            "RetryTime:0",
+            "Context:from-interval",
+            $"Extension:{arr[1]}",
+            $"setvar:caller_id=out{arr[0]}",
+            "Priority:1",
+            "Archive:yes"
+        });
 
-            // 1. Save Excel file to server uploads folder
-            Directory.CreateDirectory(UploadFolder);
-            string filePath = Path.Combine(UploadFolder, file.FileName);
+        callFiles.Add(callFilePath);
+    }
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyTo(stream);
-            }
+    // 4. Upload call files to Linux server
+    var successFiles = new List<string>();
+    var failedFiles = new List<string>();
 
-            // 2. Read Excel rows
-            var rows = FileDataReader.ReadTable(filePath).ToList();
-            if (!rows.Any())
-                return BadRequest("No data found in the Excel file.");
+    foreach (var callFile in callFiles)
+    {
+        if (UploadToSftp(callFile, "/var/spool/asterisk/outgoing"))
+            successFiles.Add(Path.GetFileName(callFile));
+        else
+            failedFiles.Add(Path.GetFileName(callFile));
+    }
 
-            // 3. Generate .call files
-            var callFiles = new List<string>();
-            foreach (var arr in rows.Skip(1)) // Skip header
-            {
-                if (arr.Length < 2) continue;
-
-                string callFilePath = Path.Combine(UploadFolder, arr[0] + ".call");
-                System.IO.File.WriteAllLines(callFilePath, new[]
-                {
-                    $"Channel:PJSIP/{arr[0]}@out",
-                    "WaitTime:30",
-                    "Maxretries:0",
-                    "RetryTime:0",
-                    "Context:from-interval",
-                    $"Extension:{arr[1]}",
-                    $"setvar:caller_id=out{arr[0]}",
-                    "Priority:1",
-                    "Archive:yes"
-                });
-
-                callFiles.Add(callFilePath);
-            }
-
-            // 4. Upload call files to Linux server
-            var successFiles = new List<string>();
-            var failedFiles = new List<string>();
-
-            foreach (var callFile in callFiles)
-            {
-                if (UploadToSftp(callFile, "/var/spool/asterisk/outgoing"))
-                    successFiles.Add(Path.GetFileName(callFile));
-                else
-                    failedFiles.Add(Path.GetFileName(callFile));
-            }
-
-            return Ok(new
-            {
-                SuccessCount = successFiles.Count,
-                FailedCount = failedFiles.Count,
-                //UploadedFiles = successFiles,
-                //FailedFiles = failedFiles
-            });
-        }
-
+    return Ok(new
+    {
+        SuccessCount = successFiles.Count,
+        FailedCount = failedFiles.Count,
+        //UploadedFiles = successFiles,
+        //FailedFiles = failedFiles
+    });
+}
         private bool UploadToSftp(string filePath, string remoteDir)
         {
             const string host = "192.168.5.61";
@@ -1276,62 +1275,61 @@ namespace PushAPIContractNumber
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpPost("InsertCampaignMaster")]
-public IActionResult InsertCampaignMaster([FromBody] CampaignMaster campaignMaster)
-{
-    try
-    {
-        using (SqlConnection con = new SqlConnection(_dbConnection))
-        {
-            con.Open();
+        [HttpPost("createcampaign")]
+ public IActionResult createCampaignMaster([FromBody] CampaignMaster campaignMaster)
+ {
+     try
+     {
+         using (SqlConnection con = new SqlConnection(_dbConnection))
+         {
+             con.Open();
 
-            string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER
-         (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
-         VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
-         VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS,
-         VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
-         VALUES
-         (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
-         @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
-         @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, 3, 60, @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS,
-         @VAR_IS_RECORDING, 'E:\Outbound\Campaign', '/var/spool/asterisk/CallFile')";
+             string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER
+          (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
+          VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
+          VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS,
+          VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
+          VALUES
+          (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
+          @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
+          @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, 3, 60, @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS,
+          @VAR_IS_RECORDING, 'NULL', 'NULL')";
 
-            using (SqlCommand cmd = new SqlCommand(insertquery, con))
-            {
-                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
-                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", campaignMaster.Campaign_Name);
-                cmd.Parameters.AddWithValue("@VAR_STATUS", campaignMaster.Status);
-                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", campaignMaster.Campaign_Description);
-                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", campaignMaster.Campaign_Type);
-                cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", campaignMaster.Time_Zone);
-                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", campaignMaster.Start_Date);
-                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", campaignMaster.End_Date);
-                cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", campaignMaster.Dialing_Mode);
-                cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", campaignMaster.Max_Concurrent_Calls);
-                cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", campaignMaster.Call_duration_Limit);
-                cmd.Parameters.AddWithValue("@VAR_TEAMS", campaignMaster.Teams);
-                cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", campaignMaster.Max_Leads);
-                cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", campaignMaster.Skill_Tags);
-                cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", campaignMaster.Is_Recording);
+             using (SqlCommand cmd = new SqlCommand(insertquery, con))
+             {
+                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
+                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", campaignMaster.Campaign_Name);
+                 cmd.Parameters.AddWithValue("@VAR_STATUS", campaignMaster.Status);
+                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", campaignMaster.Campaign_Description);
+                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", campaignMaster.Campaign_Type);
+                 cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", campaignMaster.Time_Zone);
+                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", campaignMaster.Start_Date);
+                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", campaignMaster.End_Date);
+                 cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", campaignMaster.Dialing_Mode);
+                 cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", campaignMaster.Max_Concurrent_Calls);
+                 cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", campaignMaster.Call_duration_Limit);
+                 cmd.Parameters.AddWithValue("@VAR_TEAMS", campaignMaster.Teams);
+                 cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", campaignMaster.Max_Leads);
+                 cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", campaignMaster.Skill_Tags);
+                 cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", campaignMaster.Is_Recording);
 
-               
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
-                {
-                    return Ok("Data inserted successfully.");
-                }
-                else
-                {
-                    return StatusCode(500, "Insert failed.");
-                }
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, "Internal server error: " + ex.Message);
-    }
 
-    }
+                 int rows = cmd.ExecuteNonQuery();
+                 if (rows > 0)
+                 {
+                     return Ok("Data inserted successfully.");
+                 }
+                 else
+                 {
+                     return StatusCode(500, "Insert failed.");
+                 }
+             }
+         }
+     }
+     catch (Exception ex)
+     {
+         return StatusCode(500, "Internal server error: " + ex.Message);
+     }
+ }
 }
