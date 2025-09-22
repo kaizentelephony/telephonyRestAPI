@@ -4,8 +4,8 @@ namespace Campaign_Master.Model
 {
     public class CampaignMaster
     {
-        //[Key]
-        //public int Campaign_ID { get; set; }
+        
+        public string? Campaign_id { get; set; }
         public string? Campaign_Name { get; set; }
         public string? Status { get; set; }
         public string? Campaign_Description { get; set; }
@@ -24,3 +24,4 @@ namespace Campaign_Master.Model
         public string? Is_Recording { get; set; }
     }
 }
+
