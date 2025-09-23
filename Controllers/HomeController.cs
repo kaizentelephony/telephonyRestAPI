@@ -39,7 +39,6 @@ namespace PushAPIContractNumber
         private readonly int _port = 22;
         private readonly string _username = "root";
         private readonly string _password = "Kaizen%$#@!";
-
         #region
         //[HttpPost("GetEnrolDetailsByContractID")]
         //public IActionResult GetEnrolData([FromForm] string Contract_ID)
