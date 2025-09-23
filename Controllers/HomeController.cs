@@ -33,7 +33,7 @@ namespace PushAPIContractNumber
     {
         private readonly IRestClient _restClient;
         private readonly string _dbConnection;
-        private readonly string UploadFolder = Path.Combine("/uploads"); // Server uploads folder
+        private readonly string UploadFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads"); // Server uploads folder
         private Log lg;
         private readonly string _host = "192.168.5.61";
         private readonly int _port = 22;
