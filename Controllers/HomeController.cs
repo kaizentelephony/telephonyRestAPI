@@ -39,155 +39,7 @@ namespace PushAPIContractNumber
         private readonly int _port = 22;
         private readonly string _username = "root";
         private readonly string _password = "Kaizen%$#@!";
-        #region
-        //[HttpPost("GetEnrolDetailsByContractID")]
-        //public IActionResult GetEnrolData([FromForm] string Contract_ID)
-        //{
-        //	string response = string.Empty;
-        //          string Query = "";
-        //          var results = new List<Enrollment>();
-        //          Log lg = new Log();
-        //          string status = "";
-
-        //          try
-        //          {
-
-
-
-        //              if ((Contract_ID != ""))
-        //              {
-
-        //                  lg.lodwrite("----entry----");
-
-
-
-        //                      Query = "SELECT top 1 * FROM TBL_ENROLLMENT WHERE var_contractno = '" + Contract_ID + "'ORDER BY var_called_date DESC";
-
-
-
-
-        //                  using (SqlConnection connection = new SqlConnection(_dbConnection))
-        //                  {
-        //                      connection.Open();
-
-        //                      lg.lodwrite("ConnectionOpen");
-
-        //                          using (SqlCommand selectCommand = new SqlCommand(Query, connection))
-        //                          {
-        //                              // Set the parameters
-        //                              selectCommand.Parameters.AddWithValue("@var_contractno", Contract_ID);
-        //                          //selectCommand.Parameters.AddWithValue("@VAR_ContractNumber", ContractNumber);
-
-        //                          // Execute the select command
-        //                          using (SqlDataReader reader = selectCommand.ExecuteReader())
-        //                              {
-        //                                  if (reader.HasRows)
-        //                                  {
-        //                                  lg.lodwrite("--ifcondtionentry--");
-        //                                  for (int i = 0; i < reader.FieldCount; i++)
-        //                                      {
-        //                                          while (reader.Read())
-        //                                          {
-
-        //                                          status = reader["var_BVPstatus"].ToString();
-        //                                          lg.lodwrite("--Enter into while Loop--");
-
-        //                                          Enrollment data = new Enrollment
-        //                                              {
-        //                                                  //var_called_date = reader["var_called_date"].ToString(),
-        //                                                  //var_ContractNumber = reader["var_ContractNumber"].ToString(),
-        //                                                  var_contract_id = reader["var_contractno"].ToString(),
-        //                                              var_conversation_id = reader["var_conversationID"].ToString(),
-
-        //                                              var_registered_status = reader["var_BVPstatus"].ToString(),
-
-
-        //                                              };
-
-        //                                          if(status== "Not Sufficient Voice data")
-        //                                          {
-        //                                              data.var_registered_status = "Not Sufficient Voice data";
-        //                                          }
-        //                                          else if(status == "Already Enrolled")
-        //                                          {
-        //                                              data.var_registered_status = "Already Enrolled";
-        //                                          }
-        //                                          else if(status== "Failed")
-        //                                          {
-        //                                              data.var_registered_status = "Failed";
-        //                                          }
-        //                                          else
-        //                                          {
-        //                                              data.var_registered_status = "Success";
-        //                                          }
-
-        //                                              results.Add(data);
-        //                                              // Process each row
-        //                                              // For example, retrieve data:
-
-        //                                              // Do something with ContractNumber, like logging or further processing
-        //                                          }
-        //                                      }
-
-
-        //                                  }
-        //                                  else
-        //                                  {
-        //                                  //response = "No data";
-        //                                  Enrollment ed = new Enrollment();
-        //                                  ed.var_contract_id ="";
-        //                                  ed.var_conversation_id = "";
-        //                                  ed.var_registered_status ="";
-        //                                      results.Add(ed);
-        //                                      return Ok(results);
-        //                                  }
-        //                              }
-        //                          }
-
-        //                          connection.Close();
-
-
-        //                  }
-
-
-
-        //              }
-        //              else
-        //              {
-        //                  response = "ContractNumber is Empty";
-        //              return Ok(response);
-        //              }
-        //          }
-        //          catch (Exception ex) {
-        //              lg.lodwrite("Exception---"+ex.Message.ToString()+"---");
-        //              return(Ok(ex.Message));
-        //          }
-
-
-
-        //          return Ok(results);
-
-
-
-
-
-        //}
-
-
-
-
-
-
-
-
-        //    return Ok(results);
-
-
-
-
-
-        //}
-        #endregion
+       
 
         public ivrController(IConfiguration configuration)
         {
@@ -1360,61 +1212,81 @@ namespace PushAPIContractNumber
             }
         }
         [HttpPost("createcampaign")]
- public IActionResult createCampaignMaster([FromBody] CampaignMaster campaignMaster)
- {
-     try
-     {
-         using (SqlConnection con = new SqlConnection(_dbConnection))
-         {
-             con.Open();
+    public IActionResult InsertCampaignMaster([FromBody] CampaignMaster campaignMaster)
+   {
+       try
+       {
+           
+           using (SqlConnection con = new SqlConnection(_dbConnection))
+           {
+               con.Open();
+               string checkQuery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+               using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
+               {
+                   cmdCheck.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
+                   int count = (int)cmdCheck.ExecuteScalar();
 
-             string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER
-          (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
-          VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
-          VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS,
-          VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
-          VALUES
-          (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
-          @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
-          @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, 3, 60, @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS,
-          @VAR_IS_RECORDING, 'NULL', 'NULL')";
+                   if (count > 0)
+                   {
+                       return Ok("Duplicate campaign id is not allowed.");
+                   }
+               }
 
-             using (SqlCommand cmd = new SqlCommand(insertquery, con))
-             {
-                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
-                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", campaignMaster.Campaign_Name);
-                 cmd.Parameters.AddWithValue("@VAR_STATUS", campaignMaster.Status);
-                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", campaignMaster.Campaign_Description);
-                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", campaignMaster.Campaign_Type);
-                 cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", campaignMaster.Time_Zone);
-                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", campaignMaster.Start_Date);
-                 cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", campaignMaster.End_Date);
-                 cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", campaignMaster.Dialing_Mode);
-                 cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", campaignMaster.Max_Concurrent_Calls);
-                 cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", campaignMaster.Call_duration_Limit);
-                 cmd.Parameters.AddWithValue("@VAR_TEAMS", campaignMaster.Teams);
-                 cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", campaignMaster.Max_Leads);
-                 cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", campaignMaster.Skill_Tags);
-                 cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", campaignMaster.Is_Recording);
+               string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER
+            (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
+            VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
+            VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS,VAR_RETRY_INTERVALS, VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS,
+            VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
+            VALUES
+            (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
+            @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
+            @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS,
+            @VAR_IS_RECORDING, 'NULL', 'NULL')";
+
+               using (SqlCommand cmd = new SqlCommand(insertquery, con))
+               {
+                   cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
+                   cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", campaignMaster.Campaign_Name);
+                   cmd.Parameters.AddWithValue("@VAR_STATUS", campaignMaster.Status);
+                   cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", campaignMaster.Campaign_Description);
+                   cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", campaignMaster.Campaign_Type);
+                   cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", campaignMaster.Time_Zone);
+                   cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", campaignMaster.Start_Date);
+                   cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", campaignMaster.End_Date);
+                   cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", campaignMaster.Dialing_Mode);
+                   cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", campaignMaster.Max_Concurrent_Calls);
+                   cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", campaignMaster.Call_duration_Limit);
+                   cmd.Parameters.AddWithValue("@VAR_RETRY_ATTEMPTS", campaignMaster.Retry_attempts);
+                   cmd.Parameters.AddWithValue("@VAR_RETRY_INTERVALS", campaignMaster.Retry_intervals);
+                   cmd.Parameters.AddWithValue("@VAR_TEAMS", campaignMaster.Teams);
+                   cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", campaignMaster.Max_Leads);
+                   cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", campaignMaster.Skill_Tags);
+                   cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", campaignMaster.Is_Recording);
 
 
 
-                 int rows = cmd.ExecuteNonQuery();
-                 if (rows > 0)
-                 {
-                     return Ok("Data inserted successfully.");
-                 }
-                 else
-                 {
-                     return StatusCode(500, "Insert failed.");
-                 }
-             }
-         }
-     }
-     catch (Exception ex)
-     {
-         return StatusCode(500, "Internal server error: " + ex.Message);
-     }
- }
+                   int rows = cmd.ExecuteNonQuery();
+
+                   if (rows > 0)
+                   {
+                       return Ok(new
+                       {
+                           result = "Successfully" + campaignMaster.Campaign_id
+                       });
+                   }
+
+                   else
+                   {
+                       return StatusCode(500, "Insert failed.");
+                   }
+
+               }
+           }
+       }
+       catch (Exception ex)
+       {
+           return StatusCode(500, "Internal server error: " + ex.Message);
+       }
+   }
 }
 }
