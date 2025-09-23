@@ -15,9 +15,7 @@ namespace Campaign_Master.Model
         public DateTime? End_Date { get; set; }
         public string? Dialing_Mode { get; set; }
         public string? Max_Concurrent_Calls { get; set; }
-        public string? Call_duration_Limit { get; set; }
-        public string? Retry_Attempts { get; set; }
-        public string? Retry_Intervals { get; set; }
+        public string? Call_duration_Limit { get; set; }        
         public string? Retry_attempts { get; set; }
         public string? Retry_intervals { get; set; }
         public string? Teams { get; set; }
@@ -26,5 +24,6 @@ namespace Campaign_Master.Model
         public string? Is_Recording { get; set; }
     }
 }
+
 
 
