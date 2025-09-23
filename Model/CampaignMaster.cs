@@ -18,10 +18,13 @@ namespace Campaign_Master.Model
         public string? Call_duration_Limit { get; set; }
         public string? Retry_Attempts { get; set; }
         public string? Retry_Intervals { get; set; }
+        public string? Retry_attempts { get; set; }
+        public string? Retry_intervals { get; set; }
         public string? Teams { get; set; }
         public string? Max_Leads { get; set; }
         public string? Skill_Tags { get; set; }
         public string? Is_Recording { get; set; }
     }
 }
+
 
