@@ -44,7 +44,7 @@ namespace PushAPIContractNumber
         public ivrController(IConfiguration configuration)
         {
             //string dbcon=""
-            Log lg = new Log();
+            lg = new Log();
             lg.lodwrite("databaseconnection");
             _dbConnection = configuration.GetConnectionString("dbcon");
         }
@@ -380,153 +380,161 @@ namespace PushAPIContractNumber
             }
         }
 
-         [HttpPost("outdial")]
- public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string campaignId)
- {
-     if (file == null || file.Length == 0)
-         return BadRequest("No file uploaded");
-     if (string.IsNullOrWhiteSpace(campaignId))
-         return BadRequest("Campaign Id is missing");
+        [HttpPost("outdial")]
+        public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string campaignId)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded");
+            if (string.IsNullOrWhiteSpace(campaignId))
+                return BadRequest("Campaign Id is missing");
+        
+            lg.lodwrite("=== UploadFile Entry ===");
+        
+            // 1️⃣ Save Excel in Uploads folder
+            Directory.CreateDirectory(UploadFolder);
+            string filePath = Path.Combine(UploadFolder, file.FileName);
+            using (var fs = new FileStream(filePath, FileMode.Create))
+                file.CopyTo(fs);
+        
+            // 2️⃣ Read campaign data from DB
+            string waitTime = "0";
+            string maxRetries = "0";
+            string campName = string.Empty;
+            string campId = string.Empty;
+        
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+                    string q = @"SELECT TOP 1 VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_RETRY_INTERVALS, VAR_RETRY_ATTEMPTS FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @cid";
+                    using (SqlCommand cmd = new SqlCommand(q, con))
+                    {
+                        cmd.Parameters.AddWithValue("@cid", campaignId);
+                        using (SqlDataReader r = cmd.ExecuteReader())
+                        {
+                            if (r.Read())
+                            {
+                                campId = r["VAR_CAMPAIGN_ID"]?.ToString();
+                                campName = r["VAR_CAMPAIGN_NAME"]?.ToString();
+                                waitTime = r["VAR_RETRY_INTERVALS"]?.ToString() ?? "0";
+                                maxRetries = r["VAR_RETRY_ATTEMPTS"]?.ToString() ?? "0";
+                            }
+                            else
+                            {
+                                return NotFound($"Campaign {campaignId} not found");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lg.lodwrite("Error reading campaign: " + ex.Message);
+                return StatusCode(500, "DB error while reading campaign");
+            }
+        
+            // 3️⃣ Prepare call file folder for this campaign
+            string sftpBase = "/var/spool/asterisk/CallFile";
+            string sftpCampaignFolder = $"{sftpBase}/{campName}";
+            string localCampaignFolder = Path.Combine(UploadFolder,campName);
+            Directory.CreateDirectory(localCampaignFolder);
+        
+            // 3️⃣ Update VAR_SOURCE_FILR_PATH & VAR_DESTINATION_FILE_PATH
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+                    string uppath = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_SOURCE_FILR_PATH=@src, VAR_DESTINATION_FILE_PATH=@dst WHERE VAR_CAMPAIGN_ID=@cid";
+                    using (SqlCommand ucmd = new SqlCommand(uppath, con))
+                    {
+                        ucmd.Parameters.AddWithValue("@src", filePath);
+                        ucmd.Parameters.AddWithValue("@dst", sftpCampaignFolder);
+                        ucmd.Parameters.AddWithValue("@cid", campaignId);
+                        ucmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lg.lodwrite("Error updating paths: " + ex.Message);
+            }
+        
+            // 4️⃣ Parse Excel rows
+            var rows = FileDataReader.ReadTable(filePath).ToList();
+            if (!rows.Any())
+                return BadRequest("No data in excel");
+        
+            List<string> callFiles = new();
+            foreach (var row in rows.Skip(1)) // skip header
+            {
+                if (row.Length < 2) continue;
+        
+                string callFile = Path.Combine(localCampaignFolder, row[0] + ".call");
+                try
+                {
+                    System.IO.File.WriteAllLines(callFile, new[]
+                    {
+                $"Channel:PJSIP/{row[0]}@out",
+                $"WaitTime:{waitTime}",
+                $"Maxretries:{maxRetries}",
+                "RetryTime:0",
+                "Context:from-interval",
+                $"Extension:{row[1]}",
+                $"setvar:caller_id=out{row[0]}",
+                $"setvar:campaign_id={campId}",
+                $"setvar:campaign_name={campName}",
+                "Priority:1",
+                "Archive:yes"
+            });
+                    callFiles.Add(callFile);
+                }
+                catch (Exception ex)
+                {
+                    lg.lodwrite($"Error writing call file {row[0]}: " + ex.Message);
+                }
+            }
+        
+            // 5️⃣ Upload .call files to Linux (SFTP) into campaign folder
+            var success = new List<string>();
+            var failed = new List<string>();
+            foreach (var cf in callFiles)
+            {
+                if (UploadToSftp(cf, sftpCampaignFolder))
+                    success.Add(Path.GetFileName(cf));
+                else
+                    failed.Add(Path.GetFileName(cf));
+            }
+        
+            // 6️⃣ Update campaign status
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+                    string upStatus = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_STATUS='ACTIVE' WHERE VAR_CAMPAIGN_ID=@cid";
+                    using (SqlCommand cmd = new SqlCommand(upStatus, con))
+                    {
+                        cmd.Parameters.AddWithValue("@cid", campaignId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lg.lodwrite("Error updating status: " + ex.Message);
+            }
+        
+            return Ok(new
+            {
+                SuccessCount = success.Count,
+                FailedCount = failed.Count,
+                //DestinationFolder = sftpCampaignFolder
+            });
+        }
 
-     lg.lodwrite("=== UploadFile Entry ===");
 
-     // 1️⃣ Save Excel in Uploads folder
-     Directory.CreateDirectory(UploadFolder);
-     string filePath = Path.Combine(UploadFolder, file.FileName);
-     using (var fs = new FileStream(filePath, FileMode.Create))
-         file.CopyTo(fs);
-
-     // 2️⃣ Read campaign data from DB
-     string waitTime = "30";
-     string maxRetries = "0";
-     string campName = string.Empty;
-     string campId = string.Empty;
-
-     try
-     {
-         using (SqlConnection con = new SqlConnection(_dbConnection))
-         {
-             con.Open();
-             string q = @"SELECT VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_RETRY_INTERVALS, VAR_RETRY_ATTEMPTS FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @cid";
-             using (SqlCommand cmd = new SqlCommand(q, con))
-             {
-                 cmd.Parameters.AddWithValue("@cid", campaignId);
-                 using (SqlDataReader r = cmd.ExecuteReader())
-                 {
-                     if (r.Read())
-                     {
-                         campId = r["VAR_CAMPAIGN_ID"]?.ToString();
-                         campName = r["VAR_CAMPAIGN_NAME"]?.ToString();
-                         waitTime = r["VAR_RETRY_INTERVALS"]?.ToString() ?? "30";
-                         maxRetries = r["VAR_RETRY_ATTEMPTS"]?.ToString() ?? "0";
-                     }
-                     else
-                     {
-                         return NotFound($"Campaign {campaignId} not found");
-                     }
-                 }
-             }
-         }
-     }
-     catch (Exception ex)
-     {
-         lg.lodwrite("Error reading campaign: " + ex.Message);
-         return StatusCode(500, "DB error while reading campaign");
-     }
-
-     // 3️⃣ Update VAR_SOURCE_FILR_PATH & VAR_DESTINATION_FILE_PATH
-     try
-     {
-         using (SqlConnection con = new SqlConnection(_dbConnection))
-         {
-             con.Open();
-             string uppath = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_SOURCE_FILR_PATH=@src, VAR_DESTINATION_FILE_PATH=@dst WHERE VAR_CAMPAIGN_ID=@cid";
-             using (SqlCommand ucmd = new SqlCommand(uppath, con))
-             {
-                 ucmd.Parameters.AddWithValue("@src", filePath);
-                 ucmd.Parameters.AddWithValue("@dst", "/var/spool/asterisk/CallFile");
-                 ucmd.Parameters.AddWithValue("@cid", campaignId);
-                 ucmd.ExecuteNonQuery();
-             }
-         }
-     }
-     catch (Exception ex)
-     {
-         lg.lodwrite("Error updating paths: " + ex.Message);
-     }
-
-     // 4️⃣ Parse Excel row
-     // s
-     var rows = FileDataReader.ReadTable(filePath).ToList();
-     if (!rows.Any())
-         return BadRequest("No data in excel");
-
-     List<string> callFiles = new();
-     foreach (var row in rows.Skip(1))
-     {
-         if (row.Length < 2) continue;
-
-         string callFile = Path.Combine(UploadFolder, row[0] + ".call");
-         try
-         {
-             System.IO.File.WriteAllLines(callFile, new[]
-             {
-         $"Channel:PJSIP/{row[0]}@out",
-         $"WaitTime:{waitTime}",
-         $"Maxretries:{maxRetries}",
-         "RetryTime:0",
-         "Context:from-interval",
-         $"Extension:{row[1]}",
-         $"setvar:caller_id=out{row[0]}",
-         $"setvar:campaign_id={campId}",
-         $"setvar:campaign_name={campName}",
-         "Priority:1",
-         "Archive:yes"
-     });
-             callFiles.Add(callFile);
-         }
-         catch (Exception ex)
-         {
-             lg.lodwrite($"Error writing call file {row[0]}: " + ex.Message);
-         }
-     }
-
-     // 5️⃣ Upload .call files to Linux (SFTP)
-     var success = new List<string>();
-     var failed = new List<string>();
-     foreach (var cf in callFiles)
-     {
-         if (UploadToSftp(cf, "/var/spool/asterisk/CallFile"))
-             success.Add(Path.GetFileName(cf));
-         else
-             failed.Add(Path.GetFileName(cf));
-     }
-
-     // 6️⃣ After all files created → mark status = INPROCESS
-     try
-     {
-         using (SqlConnection con = new SqlConnection(_dbConnection))
-         {
-             con.Open();
-             string upStatus = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_STATUS='ACTIVE' WHERE VAR_CAMPAIGN_ID=@cid";
-             using (SqlCommand cmd = new SqlCommand(upStatus, con))
-             {
-                 cmd.Parameters.AddWithValue("@cid", campaignId);
-                 cmd.ExecuteNonQuery();
-             }
-         }
-     }
-     catch (Exception ex)
-     {
-         lg.lodwrite("Error updating status: " + ex.Message);
-     }
-
-     return Ok(new
-     {
-         SuccessCount = success.Count,
-         FailedCount = failed.Count,
-     });
- }
 
         private bool UploadToSftp(string filePath, string remoteDir)
         {
@@ -534,24 +542,30 @@ namespace PushAPIContractNumber
             const int port = 22;
             const string username = "root";
             const string password = "Kaizen%$#@!";
-
+        
             try
             {
                 using var client = new SftpClient(host, port, username, password);
                 client.Connect();
-
+        
+                // Ensure the remote directory exists
+                if (!client.Exists(remoteDir))
+                {
+                    client.CreateDirectory(remoteDir);
+                }
+        
                 string remotePath = $"{remoteDir}/{Path.GetFileName(filePath)}";
-                Console.WriteLine($"Uploading {filePath} to {remotePath}");
-
-                using var fileStream = new FileStream(filePath, FileMode.Open);
-                client.UploadFile(fileStream, remotePath);
-
+                Console.WriteLine($"Uploading {filePath} → {remotePath}");
+        
+                using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                client.UploadFile(fileStream, remotePath, true); // true = overwrite if exists
+        
                 client.Disconnect();
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Upload failed for {filePath}: {ex.Message}");
+                lg.lodwrite($"Upload failed for {filePath}: {ex.Message}");
                 return false;
             }
         }
