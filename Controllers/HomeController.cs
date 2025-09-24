@@ -380,7 +380,7 @@ namespace PushAPIContractNumber
             }
         }
 
-        [HttpPost("outdial")]
+       [HttpPost("outdial")]
 public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string campaignId)
 {
     if (file == null || file.Length == 0)
@@ -390,15 +390,17 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
 
     lg.lodwrite("=== UploadFile Entry ===");
 
+    
     Directory.CreateDirectory(UploadFolder);
     string filePath = Path.Combine(UploadFolder, file.FileName);
     using (var fs = new FileStream(filePath, FileMode.Create))
         file.CopyTo(fs);
 
+    
     string waitTime = "0";
     string maxRetries = "0";
-    string campNameOriginal = string.Empty; // keep original for .call file content
-    string campNameUpd = string.Empty; // for folders/paths
+    string campNameOriginal = string.Empty; 
+    string campNameUpd = string.Empty;      
     string campId = string.Empty;
 
     try
@@ -421,6 +423,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
                         waitTime = r["VAR_RETRY_INTERVALS"]?.ToString() ?? "0";
                         maxRetries = r["VAR_RETRY_ATTEMPTS"]?.ToString() ?? "0";
 
+                       
                         campNameUpd = campNameOriginal.Replace(" ", "-") + "_" + campId;
                     }
                     else
@@ -437,11 +440,13 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         return StatusCode(500, "DB error while reading campaign");
     }
 
+
     string sftpBase = "/var/spool/asterisk/CallFile";
     string sftpCampaignFolder = $"{sftpBase}/{campNameUpd}";
     string localCampaignFolder = Path.Combine(UploadFolder, campNameUpd);
     Directory.CreateDirectory(localCampaignFolder);
 
+   
     try
     {
         using (SqlConnection con = new SqlConnection(_dbConnection))
@@ -464,40 +469,53 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         lg.lodwrite("Error updating paths: " + ex.Message);
     }
 
+  
     var rows = FileDataReader.ReadTable(filePath).ToList();
     if (!rows.Any())
         return BadRequest("No data in excel");
 
     List<string> callFiles = new();
+    Random rnd = new Random();
+
     foreach (var row in rows.Skip(1)) // skip header
     {
         if (row.Length < 2) continue;
 
-        string callFile = Path.Combine(localCampaignFolder, row[0] + ".call");
+        string phoneNumber = row[0];
+        string extension = row[1];
+        string uniqueId = rnd.Next(100000, 999999).ToString();
+
+        // filename format: phone_campaignId_uniqueId.call
+        string fileName = $"{phoneNumber}_{campId}_{uniqueId}.call";
+        string callFile = Path.Combine(localCampaignFolder, fileName);
+
         try
         {
             System.IO.File.WriteAllLines(callFile, new[]
             {
-        $"Channel:PJSIP/{row[0]}@out",
-         "WaitTime:30",
-             $"Maxretries:{maxRetries}",
-             $"RetryTime:{waitTime}",
+        $"Channel:PJSIP/{phoneNumber}@out",
+        $"WaitTime:{waitTime}",
+        $"Maxretries:{maxRetries}",
+        "RetryTime:0",
         "Context:from-interval",
-        $"Extension:{row[1]}",
-        $"setvar:caller_id=out{row[0]}",
+        $"Extension:{extension}",
+        $"setvar:caller_id=out{phoneNumber}",
         $"setvar:campaign_id={campId}",
-        $"setvar:campaign_name={campNameOriginal}", // keep original name for call file vars
+        $"setvar:campaign_name={campNameOriginal}", // original campaign name
+        $"setvar:unique_id={uniqueId}",
         "Priority:1",
         "Archive:yes"
     });
+
             callFiles.Add(callFile);
         }
         catch (Exception ex)
         {
-            lg.lodwrite($"Error writing call file {row[0]}: " + ex.Message);
+            lg.lodwrite($"Error writing call file {phoneNumber}: " + ex.Message);
         }
     }
 
+  
     var success = new List<string>();
     var failed = new List<string>();
     foreach (var cf in callFiles)
@@ -508,6 +526,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
             failed.Add(Path.GetFileName(cf));
     }
 
+   
     try
     {
         using (SqlConnection con = new SqlConnection(_dbConnection))
@@ -532,46 +551,41 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
     {
         SuccessCount = success.Count,
         FailedCount = failed.Count,
-        //DestinationFolder = sftpCampaignFolder
     });
 }
 
+private bool UploadToSftp(string filePath, string remoteDir)
+{
+    const string host = "192.168.5.61";
+    const int port = 22;
+    const string username = "root";
+    const string password = "Kaizen%$#@!";
 
+    try
+    {
+        using var client = new SftpClient(host, port, username, password);
+        client.Connect();
 
-
-        private bool UploadToSftp(string filePath, string remoteDir)
+        if (!client.Exists(remoteDir))
         {
-            const string host = "192.168.5.61";
-            const int port = 22;
-            const string username = "root";
-            const string password = "Kaizen%$#@!";
-        
-            try
-            {
-                using var client = new SftpClient(host, port, username, password);
-                client.Connect();
-        
-                // Ensure the remote directory exists
-                if (!client.Exists(remoteDir))
-                {
-                    client.CreateDirectory(remoteDir);
-                }
-        
-                string remotePath = $"{remoteDir}/{Path.GetFileName(filePath)}";
-                Console.WriteLine($"Uploading {filePath} → {remotePath}");
-        
-                using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                client.UploadFile(fileStream, remotePath, true); // true = overwrite if exists
-        
-                client.Disconnect();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                lg.lodwrite($"Upload failed for {filePath}: {ex.Message}");
-                return false;
-            }
+            client.CreateDirectory(remoteDir);
         }
+
+        string remotePath = $"{remoteDir}/{Path.GetFileName(filePath)}";
+        Console.WriteLine($"Uploading {filePath} → {remotePath}");
+
+        using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        client.UploadFile(fileStream, remotePath, true);
+
+        client.Disconnect();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        lg.lodwrite($"Upload failed for {filePath}: {ex.Message}");
+        return false;
+    }
+}
 
         [HttpPost("updateuniqueidbycalldetails")]
         public IActionResult UpdateUniqueIds([FromBody] calldetails request)
