@@ -390,27 +390,24 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
 
     lg.lodwrite("=== UploadFile Entry ===");
 
-    // 1️⃣ Save Excel in Uploads folder
     Directory.CreateDirectory(UploadFolder);
     string filePath = Path.Combine(UploadFolder, file.FileName);
     using (var fs = new FileStream(filePath, FileMode.Create))
         file.CopyTo(fs);
 
-    // 2️⃣ Read campaign data
     string waitTime = "0";
     string maxRetries = "0";
     string campNameOriginal = string.Empty; // for .call content
     string campNameUpd = string.Empty;      // for folders
     string campId = string.Empty;
+    string campaignStatus = string.Empty;
 
     try
     {
         using (SqlConnection con = new SqlConnection(_dbConnection))
         {
             con.Open();
-            string q = @"SELECT TOP 1 VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_RETRY_INTERVALS, VAR_RETRY_ATTEMPTS 
-                 FROM TBL_CAMPAIGN_MASTER 
-                 WHERE VAR_CAMPAIGN_ID = @cid";
+            string q = @"SELECT TOP 1 VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_RETRY_INTERVALS, VAR_RETRY_ATTEMPTS, VAR_STATUS FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @cid";
             using (SqlCommand cmd = new SqlCommand(q, con))
             {
                 cmd.Parameters.AddWithValue("@cid", campaignId);
@@ -422,8 +419,8 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
                         campNameOriginal = r["VAR_CAMPAIGN_NAME"]?.ToString();
                         waitTime = r["VAR_RETRY_INTERVALS"]?.ToString() ?? "0";
                         maxRetries = r["VAR_RETRY_ATTEMPTS"]?.ToString() ?? "0";
+                        campaignStatus = r["VAR_STATUS"]?.ToString() ?? "";
 
-                        // sanitize for folder usage
                         campNameUpd = campNameOriginal.Replace(" ", "-") + "_" + campId;
                     }
                     else
@@ -440,21 +437,22 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         return StatusCode(500, "DB error while reading campaign");
     }
 
-    // 3️⃣ Prepare call file folder for this campaign
+    if (campaignStatus.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase))
+    {
+        return Ok($"Request cannot be processed for Campaign_ID {campaignId} .");
+    }
+
     string sftpBase = "/var/spool/asterisk/CallFile";
     string sftpCampaignFolder = $"{sftpBase}/{campNameUpd}";
     string localCampaignFolder = Path.Combine(UploadFolder, campNameUpd);
     Directory.CreateDirectory(localCampaignFolder);
 
-    // 4️⃣ Update paths in DB
     try
     {
         using (SqlConnection con = new SqlConnection(_dbConnection))
         {
             con.Open();
-            string uppath = @"UPDATE TBL_CAMPAIGN_MASTER 
-                      SET VAR_SOURCE_FILR_PATH=@src, VAR_DESTINATION_FILE_PATH=@dst 
-                      WHERE VAR_CAMPAIGN_ID=@cid";
+            string uppath = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_SOURCE_FILR_PATH=@src, VAR_DESTINATION_FILE_PATH=@dst WHERE VAR_CAMPAIGN_ID=@cid";
             using (SqlCommand ucmd = new SqlCommand(uppath, con))
             {
                 ucmd.Parameters.AddWithValue("@src", filePath);
@@ -469,7 +467,6 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         lg.lodwrite("Error updating paths: " + ex.Message);
     }
 
-    // 5️⃣ Parse Excel rows
     var rows = FileDataReader.ReadTable(filePath).ToList();
     if (!rows.Any())
         return BadRequest("No data in excel");
@@ -477,7 +474,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
     List<string> callFiles = new();
     Random rnd = new Random();
 
-    foreach (var row in rows.Skip(1)) // skip header
+    foreach (var row in rows.Skip(1)) 
     {
         if (row.Length < 2) continue;
 
@@ -485,7 +482,6 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         string extension = row[1];
         string uniqueId = rnd.Next(100000, 999999).ToString();
 
-        // filename format: phone_campaignId_uniqueId.call
         string fileName = $"{phoneNumber}_{campId}_{uniqueId}.call";
         string callFile = Path.Combine(localCampaignFolder, fileName);
 
@@ -501,7 +497,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         $"Extension:{extension}",
         $"setvar:caller_id=out{phoneNumber}",
         $"setvar:campaign_id={campId}",
-        $"setvar:campaign_name={campNameOriginal}", // original campaign name
+        $"setvar:campaign_name={campNameOriginal}", 
         $"setvar:unique_id={uniqueId}",
         "Priority:1",
         "Archive:yes"
@@ -515,7 +511,6 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         }
     }
 
-    // 6️⃣ Upload .call files to SFTP
     var success = new List<string>();
     var failed = new List<string>();
     foreach (var cf in callFiles)
@@ -526,15 +521,12 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
             failed.Add(Path.GetFileName(cf));
     }
 
-    // 7️⃣ Update campaign status
     try
     {
         using (SqlConnection con = new SqlConnection(_dbConnection))
         {
             con.Open();
-            string upStatus = @"UPDATE TBL_CAMPAIGN_MASTER 
-                        SET VAR_STATUS='ACTIVE' 
-                        WHERE VAR_CAMPAIGN_ID=@cid";
+            string upStatus = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_STATUS='ACTIVE' WHERE VAR_CAMPAIGN_ID=@cid";
             using (SqlCommand cmd = new SqlCommand(upStatus, con))
             {
                 cmd.Parameters.AddWithValue("@cid", campaignId);
@@ -553,6 +545,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         FailedCount = failed.Count,
     });
 }
+
 
 private bool UploadToSftp(string filePath, string remoteDir)
 {
