@@ -11,8 +11,8 @@ namespace Campaign_Master.Model
         public string? Campaign_Description { get; set; }
         public string? Campaign_Type { get; set; }
         public string? Time_Zone { get; set; }
-        public DateTime? Start_Date { get; set; }
-        public DateTime? End_Date { get; set; }
+        public string? Start_Date { get; set; }
+        public string? End_Date { get; set; }
         public string? Dialing_Mode { get; set; }
         public string? Max_Concurrent_Calls { get; set; }
         public string? Call_duration_Limit { get; set; }        
@@ -24,6 +24,7 @@ namespace Campaign_Master.Model
         public string? Is_Recording { get; set; }
     }
 }
+
 
 
 
