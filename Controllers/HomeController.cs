@@ -494,9 +494,9 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
             System.IO.File.WriteAllLines(callFile, new[]
             {
         $"Channel:PJSIP/{phoneNumber}@out",
-        $"WaitTime:{waitTime}",
+        "WaitTime:30",
         $"Maxretries:{maxRetries}",
-        "RetryTime:0",
+        $"RetryTime:{waitTime}",
         "Context:from-interval",
         $"Extension:{extension}",
         $"setvar:caller_id=out{phoneNumber}",
