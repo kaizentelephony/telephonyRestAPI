@@ -390,17 +390,17 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
 
     lg.lodwrite("=== UploadFile Entry ===");
 
-    
+    // 1️⃣ Save Excel in Uploads folder
     Directory.CreateDirectory(UploadFolder);
     string filePath = Path.Combine(UploadFolder, file.FileName);
     using (var fs = new FileStream(filePath, FileMode.Create))
         file.CopyTo(fs);
 
-    
+    // 2️⃣ Read campaign data
     string waitTime = "0";
     string maxRetries = "0";
-    string campNameOriginal = string.Empty; 
-    string campNameUpd = string.Empty;      
+    string campNameOriginal = string.Empty; // for .call content
+    string campNameUpd = string.Empty;      // for folders
     string campId = string.Empty;
 
     try
@@ -423,7 +423,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
                         waitTime = r["VAR_RETRY_INTERVALS"]?.ToString() ?? "0";
                         maxRetries = r["VAR_RETRY_ATTEMPTS"]?.ToString() ?? "0";
 
-                       
+                        // sanitize for folder usage
                         campNameUpd = campNameOriginal.Replace(" ", "-") + "_" + campId;
                     }
                     else
@@ -440,13 +440,13 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         return StatusCode(500, "DB error while reading campaign");
     }
 
-
+    // 3️⃣ Prepare call file folder for this campaign
     string sftpBase = "/var/spool/asterisk/CallFile";
     string sftpCampaignFolder = $"{sftpBase}/{campNameUpd}";
     string localCampaignFolder = Path.Combine(UploadFolder, campNameUpd);
     Directory.CreateDirectory(localCampaignFolder);
 
-   
+    // 4️⃣ Update paths in DB
     try
     {
         using (SqlConnection con = new SqlConnection(_dbConnection))
@@ -469,7 +469,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         lg.lodwrite("Error updating paths: " + ex.Message);
     }
 
-  
+    // 5️⃣ Parse Excel rows
     var rows = FileDataReader.ReadTable(filePath).ToList();
     if (!rows.Any())
         return BadRequest("No data in excel");
@@ -515,7 +515,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
         }
     }
 
-  
+    // 6️⃣ Upload .call files to SFTP
     var success = new List<string>();
     var failed = new List<string>();
     foreach (var cf in callFiles)
@@ -526,7 +526,7 @@ public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string cam
             failed.Add(Path.GetFileName(cf));
     }
 
-   
+    // 7️⃣ Update campaign status
     try
     {
         using (SqlConnection con = new SqlConnection(_dbConnection))
@@ -586,6 +586,7 @@ private bool UploadToSftp(string filePath, string remoteDir)
         return false;
     }
 }
+
 
         [HttpPost("updateuniqueidbycalldetails")]
         public IActionResult UpdateUniqueIds([FromBody] calldetails request)
