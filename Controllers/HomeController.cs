@@ -1242,89 +1242,170 @@ private bool UploadToSftp(string filePath, string remoteDir)
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpPost("createcampaign")]
-       public IActionResult InsertCampaignMaster([FromBody] CampaignMaster campaignMaster)
-    {
-       
-        try
-        {             
+      [HttpPost("CreateCampaignMaster")]
+ public IActionResult InsertCampaignMaster([FromBody] CampaignMaster campaignMaster)
+ {
+     try
+     {
+         using (SqlConnection con = new SqlConnection(_dbConnection))
+         {
+             con.Open();
+             var ErrorMessage = new List<string>();
 
-            using (SqlConnection con = new SqlConnection(_dbConnection))
-            {
-                con.Open();
-                              
+             string? startdate = null;
+             string? enddate = null;
 
+             if (string.IsNullOrWhiteSpace(campaignMaster.Campaign_id))
+             {
+                 ErrorMessage.Add("Campaign_id is mandatory");
+             }
 
-                #region
-                string checkQuery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
-                using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
-                {
-                    cmdCheck.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
-                    int count = (int)cmdCheck.ExecuteScalar();
+             if (string.IsNullOrWhiteSpace(campaignMaster.Campaign_Name))
+             {
+                 ErrorMessage.Add("Campaign_Name is mandatory");
+             }
+             if (string.IsNullOrWhiteSpace(campaignMaster.Status))
+             {
+                 ErrorMessage.Add("Status is mandatory");
+             }
+             if (string.IsNullOrWhiteSpace(campaignMaster.Time_Zone))
+             {
+                 ErrorMessage.Add("Time_Zone is mandatory");
+             }
 
-                    if (count > 0)
-                    {
-                        return Ok("Duplicate campaign id is not allowed.");
-                    }
-                }
-                #endregion
+             if (string.IsNullOrWhiteSpace(campaignMaster.Start_Date))
+             {
+                 ErrorMessage.Add("Start_Date is mandatory");
+             }
+             else if (!DateTime.TryParse(campaignMaster.Start_Date, out DateTime endDate))
+             {
+                 ErrorMessage.Add("Start_Date must be a valid date");
+             }
+             if (string.IsNullOrWhiteSpace(campaignMaster.End_Date))
+             {
+                 ErrorMessage.Add("End_Date is mandatory");
+             }
+             else if (!DateTime.TryParse(campaignMaster.End_Date, out DateTime endDate))
+             {
+                 ErrorMessage.Add("End_Date must be a valid date");
+             }
+             if (string.IsNullOrWhiteSpace(campaignMaster.Dialing_Mode))
+             {
+                 ErrorMessage.Add("Dialing_Mode is mandatory");
+             }
+             if (string.IsNullOrWhiteSpace(campaignMaster.Retry_intervals))
+             {
+                 ErrorMessage.Add("Retry_intervals is mandatory");
+             }
+             if (string.IsNullOrWhiteSpace(campaignMaster.Retry_attempts))
+             {
+                 ErrorMessage.Add("Retry_attempts is mandatory");
+             }
 
-                string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER
-             (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
-             VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
-             VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS,VAR_RETRY_INTERVALS, VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS,
-             VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
-             VALUES
-             (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
-             @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
-             @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS,
-             @VAR_IS_RECORDING, 'NULL', 'NULL')";
+             if (ErrorMessage.Count > 0)
+             {
+                 return Ok(new { ErrorMessage });
+             }
+             // --- Check if record already exists ---
+             string checkQuery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+             using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
+             {
+                 cmdCheck.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
+                 int count = (int)cmdCheck.ExecuteScalar();
 
-                using (SqlCommand cmd = new SqlCommand(insertquery, con))
-                {
-                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
-                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", campaignMaster.Campaign_Name);
-                    cmd.Parameters.AddWithValue("@VAR_STATUS", campaignMaster.Status);
-                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", campaignMaster.Campaign_Description);
-                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", campaignMaster.Campaign_Type);
-                    cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", campaignMaster.Time_Zone);
-                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", campaignMaster.Start_Date);
-                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", campaignMaster.End_Date);
-                    cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", campaignMaster.Dialing_Mode);
-                    cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", campaignMaster.Max_Concurrent_Calls);
-                    cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", campaignMaster.Call_duration_Limit);
-                    cmd.Parameters.AddWithValue("@VAR_RETRY_ATTEMPTS", campaignMaster.Retry_attempts);
-                    cmd.Parameters.AddWithValue("@VAR_RETRY_INTERVALS", campaignMaster.Retry_intervals);
-                    cmd.Parameters.AddWithValue("@VAR_TEAMS", campaignMaster.Teams);
-                    cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", campaignMaster.Max_Leads);
-                    cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", campaignMaster.Skill_Tags);
-                    cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", campaignMaster.Is_Recording);
+                 if (count > 0)
+                 {
+                     // --- UPDATE ---
+                     string updateQuery = @"UPDATE TBL_CAMPAIGN_MASTER 
+                     SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME,VAR_STATUS=@VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION=@VAR_CAMPAIGN_DESCRIPTION,
+                     VAR_CAMPAIGN_TYPE=@VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE=@VAR_TIME_ZONE,VAR_CAMPAIGN_START_TIME=@VAR_CAMPAIGN_START_TIME,
+                     VAR_CAMPAIGN_END_TIME=@VAR_CAMPAIGN_END_TIME,VAR_DIALING_MODE=@VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS=@VAR_MAX_CONCURRENT_CALLS,
+                     VAR_CALL_DURATION_LIMIT=@VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS=@VAR_RETRY_ATTEMPTS,VAR_RETRY_INTERVALS=@VAR_RETRY_INTERVALS,
+                     VAR_TEAMS=@VAR_TEAMS,VAR_MAX_LEADS=@VAR_MAX_LEADS,VAR_SKILL_TAGS=@VAR_SKILL_TAGS,
+                     VAR_IS_RECORDING=@VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
 
+                     using (SqlCommand cmd = new SqlCommand(updateQuery, con))
+                     {
+                         AddCampaignParameters(cmd, campaignMaster);
+                         int update = cmd.ExecuteNonQuery();
 
+                         if (update > 0)
+                         {
+                             return Ok("Update Successfully " + campaignMaster.Campaign_id);
+                         }
+                         else
+                         {
+                             return StatusCode(500, "Update failed");
+                             //return Ok("Duplicate campaign id is not allowed.");
 
-                    int rows = cmd.ExecuteNonQuery();
+                         }
+                     }
+                 }
 
+                 else
+                 {
+                     // --- INSERT ---
+                     string insertQuery = @"
+                 INSERT INTO TBL_CAMPAIGN_MASTER
+                 (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
+                  VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
+                  VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, 
+                  VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS, VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
+                 VALUES
+                 (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
+                  @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
+                  @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, 
+                  @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS, @VAR_IS_RECORDING, NULL, NULL)";
 
-                    if (rows > 0)
-                    {
-                        return Ok(new
-                        {
-                            result = "Successfully" + campaignMaster.Campaign_id
-                        });
+                     using (SqlCommand cmd = new SqlCommand(insertQuery, con))
+                     {
+                         AddCampaignParameters(cmd, campaignMaster);
+                         int rows = cmd.ExecuteNonQuery();
 
-                    }
-                    else
-                    {
-                        return StatusCode(500, "Insert failed.");
-                    }
+                         if (rows > 0)
+                             return Ok(new { Result = "Successfully" + campaignMaster.Campaign_id });
+                         else
+                             return StatusCode(500, "Insert failed");
+                     }
+                 }
+             }
+         }
+     }
+     catch (Exception ex)
+     {
+         return StatusCode(500, "Internal server error: " + ex.Message);
+     }
+ }
 
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Internal server error: " + ex.Message);
-        }
-    }
+ // --- Helper Method to Add Parameters ---
+ private void AddCampaignParameters(SqlCommand cmd, CampaignMaster campaignMaster)
+ {
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", campaignMaster.Campaign_Name);
+     cmd.Parameters.AddWithValue("@VAR_STATUS", campaignMaster.Status);
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", campaignMaster.Campaign_Description ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", campaignMaster.Campaign_Type ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", campaignMaster.Time_Zone);
+
+     if (DateTime.TryParse(campaignMaster.Start_Date, out DateTime startDate))
+         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", startDate);
+     else
+         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", DBNull.Value);
+
+     if (DateTime.TryParse(campaignMaster.End_Date, out DateTime endDate))
+         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", endDate);
+     else
+         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", DBNull.Value);
+
+     cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", campaignMaster.Dialing_Mode);
+     cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", campaignMaster.Max_Concurrent_Calls ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", campaignMaster.Call_duration_Limit ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_RETRY_ATTEMPTS", campaignMaster.Retry_attempts);
+     cmd.Parameters.AddWithValue("@VAR_RETRY_INTERVALS", campaignMaster.Retry_intervals);
+     cmd.Parameters.AddWithValue("@VAR_TEAMS", campaignMaster.Teams ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", campaignMaster.Max_Leads ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", campaignMaster.Skill_Tags ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", campaignMaster.Is_Recording ?? (object)DBNull.Value);
+ }
 }
 }
