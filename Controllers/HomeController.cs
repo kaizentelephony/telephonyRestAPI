@@ -1433,5 +1433,3 @@ using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
      cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", campaignMaster.Skill_Tags ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", campaignMaster.Is_Recording ?? (object)DBNull.Value);
  }
-}
-
