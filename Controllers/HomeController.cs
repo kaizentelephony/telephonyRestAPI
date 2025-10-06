@@ -1302,67 +1302,99 @@ private bool UploadToSftp(string filePath, string remoteDir)
              }
              // --- Check if record already exists ---
              string checkQuery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
-             using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
-             {
-                 cmdCheck.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", campaignMaster.Campaign_id);
-                 int count = (int)cmdCheck.ExecuteScalar();
+using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
+{
+    cmdCheck.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
+    int count = (int)cmdCheck.ExecuteScalar();
 
-                 if (count > 0)
-                 {
-                     // --- UPDATE ---
-                     string updateQuery = @"UPDATE TBL_CAMPAIGN_MASTER 
-                     SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME,VAR_STATUS=@VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION=@VAR_CAMPAIGN_DESCRIPTION,
-                     VAR_CAMPAIGN_TYPE=@VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE=@VAR_TIME_ZONE,VAR_CAMPAIGN_START_TIME=@VAR_CAMPAIGN_START_TIME,
-                     VAR_CAMPAIGN_END_TIME=@VAR_CAMPAIGN_END_TIME,VAR_DIALING_MODE=@VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS=@VAR_MAX_CONCURRENT_CALLS,
-                     VAR_CALL_DURATION_LIMIT=@VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS=@VAR_RETRY_ATTEMPTS,VAR_RETRY_INTERVALS=@VAR_RETRY_INTERVALS,
-                     VAR_TEAMS=@VAR_TEAMS,VAR_MAX_LEADS=@VAR_MAX_LEADS,VAR_SKILL_TAGS=@VAR_SKILL_TAGS,
-                     VAR_IS_RECORDING=@VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
+    if (count > 0)
+    {
+        // --- UPDATE CAMPAIGN MASTER ---
+        string Campaignquery = @"UPDATE TBL_CAMPAIGN_MASTER 
+    SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME,VAR_STATUS=@VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION=@VAR_CAMPAIGN_DESCRIPTION,
+    VAR_CAMPAIGN_TYPE=@VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE=@VAR_TIME_ZONE,VAR_CAMPAIGN_START_TIME=@VAR_CAMPAIGN_START_TIME,
+    VAR_CAMPAIGN_END_TIME=@VAR_CAMPAIGN_END_TIME,VAR_DIALING_MODE=@VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS=@VAR_MAX_CONCURRENT_CALLS,
+    VAR_CALL_DURATION_LIMIT=@VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS=@VAR_RETRY_ATTEMPTS,VAR_RETRY_INTERVALS=@VAR_RETRY_INTERVALS,
+    VAR_TEAMS=@VAR_TEAMS,VAR_MAX_LEADS=@VAR_MAX_LEADS,VAR_SKILL_TAGS=@VAR_SKILL_TAGS,
+    VAR_IS_RECORDING=@VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
 
-                     using (SqlCommand cmd = new SqlCommand(updateQuery, con))
-                     {
-                         AddCampaignParameters(cmd, campaignMaster);
-                         int update = cmd.ExecuteNonQuery();
+        using (SqlCommand cmd = new SqlCommand(Campaignquery, con))
+        {
+            AddCampaignParameters(cmd, dNIS_TABLE);
+            cmd.ExecuteNonQuery();
+        }
+       
 
-                         if (update > 0)
-                         {
-                             return Ok("Update Successfully " + campaignMaster.Campaign_id);
-                         }
-                         else
-                         {
-                             return StatusCode(500, "Update failed");
-                             //return Ok("Duplicate campaign id is not allowed.");
+        string selectquery = "SELECT TOP(1) VAR_DNIS FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE' ORDER BY VAR_DNIS";
 
-                         }
-                     }
-                 }
+        using (SqlCommand checkDnisCmd = new SqlCommand(selectquery, con))
+        using (SqlDataReader reader = checkDnisCmd.ExecuteReader())
+        {
+            if (reader.Read()) // fetch TOP 1 row
+            {
+                string selectedDnis = reader["VAR_DNIS"].ToString();
+                reader.Close();
 
-                 else
-                 {
-                     // --- INSERT ---
-                     string insertQuery = @"
-                 INSERT INTO TBL_CAMPAIGN_MASTER
-                 (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
-                  VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
-                  VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, 
-                  VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS, VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
-                 VALUES
-                 (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
-                  @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
-                  @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, 
-                  @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS, @VAR_IS_RECORDING, NULL, NULL)";
+                string DNISquery = @"UPDATE TBL_DNIS SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME, 
+                                     VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID,VAR_MODE='INUSE'
+                                     WHERE VAR_DNIS=@VAR_DNIS";
 
-                     using (SqlCommand cmd = new SqlCommand(insertQuery, con))
-                     {
-                         AddCampaignParameters(cmd, campaignMaster);
-                         int rows = cmd.ExecuteNonQuery();
+                using (SqlCommand cmd = new SqlCommand(DNISquery, con))
+                {
+                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
+                    cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", dNIS_TABLE.campaign_name);
+                    cmd.Parameters.AddWithValue("@VAR_DNIS", selectedDnis);
 
-                         if (rows > 0)
-                             return Ok(new { Result = "Successfully" + campaignMaster.Campaign_id });
-                         else
-                             return StatusCode(500, "Insert failed");
-                     }
-                 }
-             }
+                    int update = cmd.ExecuteNonQuery();
+                    if (update > 0)
+                    {
+                        return Ok("Updated Successfully " + selectedDnis);
+                    }
+                    else
+                    {
+                        return StatusCode(500, "DNIS update failed");
+                    }
+                }
+            }
+            else
+            {
+                return NotFound("No DNIS found with VAR_MODE='NOTINUSE'");
+            }
+        }
+
+
+        //return Ok("Campaign updated successfully " + dNIS_TABLE.campaign_id);
+    }
+    else
+    {
+        // --- INSERT NEW CAMPAIGN ---
+        string insertQuery = @"INSERT INTO TBL_CAMPAIGN_MASTER
+    (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
+    VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
+    VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, 
+    VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS, VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
+    VALUES
+    (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
+    @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
+    @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, 
+    @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS, @VAR_IS_RECORDING, NULL, NULL)";
+
+        using (SqlCommand cmd = new SqlCommand(insertQuery, con))
+        {
+            AddCampaignParameters(cmd, dNIS_TABLE);
+            int rows = cmd.ExecuteNonQuery();
+
+            if (rows > 0)
+            {
+                return Ok(new { Result = "Inserted Successfully " + dNIS_TABLE.campaign_id });
+            }
+            else
+            {
+                return StatusCode(500, "Insert failed");
+            }
+        }
+    }
+}
          }
      }
      catch (Exception ex)
