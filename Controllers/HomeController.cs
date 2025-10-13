@@ -1143,7 +1143,7 @@ private bool UploadToSftp(string filePath, string remoteDir)
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-       [HttpPost("CreateCampaignMaster")]
+       
    [HttpPost("CreateCampaignMaster")]
  public IActionResult InsertdNIS_TABLE([FromBody] DNIS_TABLE dNIS_TABLE)
  {
