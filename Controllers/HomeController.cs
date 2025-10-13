@@ -1144,252 +1144,265 @@ private bool UploadToSftp(string filePath, string remoteDir)
             }
         }
        [HttpPost("CreateCampaignMaster")]
-  public IActionResult InsertdNIS_TABLE([FromBody] DNIS_TABLE dNIS_TABLE)
-  {
-      try
-      {
-          using (SqlConnection con = new SqlConnection(_dbConnection))
-          {
-              con.Open();
+   [HttpPost("CreateCampaignMaster")]
+ public IActionResult InsertdNIS_TABLE([FromBody] DNIS_TABLE dNIS_TABLE)
+ {
+     try
+     {
+         List<string> ErrorMessage = new List<string>();
 
-              var ErrorMessage = new List<string>();
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
+         {
+             ErrorMessage.Add("Campaign_id is mandatory");
+         }
 
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
-              {
-                  ErrorMessage.Add("Campaign_id is mandatory");
-              }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
+         {
+             ErrorMessage.Add("Campaign_Name is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
+         {
+             ErrorMessage.Add("Status is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
+         {
+             ErrorMessage.Add("Time_Zone is mandatory");
+         }
 
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
-              {
-                  ErrorMessage.Add("Campaign_Name is mandatory");
-              }
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
-              {
-                  ErrorMessage.Add("Status is mandatory");
-              }
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
-              {
-                  ErrorMessage.Add("Time_Zone is mandatory");
-              }
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
-              {
-                  ErrorMessage.Add("Start_Date is mandatory");
-              }
-              else if (!DateTime.TryParse(dNIS_TABLE.Start_Date, out DateTime startDate))
-              {
-                  ErrorMessage.Add("Start_Date must be a valid date");
-              }
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
-              {
-                  ErrorMessage.Add("End_Date is mandatory");
-              }
-              else if (!DateTime.TryParse(dNIS_TABLE.End_Date, out DateTime parsedEndDate))
-              {
-                  ErrorMessage.Add("End_Date must be a valid date");
-              }
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
-              {
-                  ErrorMessage.Add("Dialing_Mode is mandatory");
-              }
 
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
-              {
-                  ErrorMessage.Add("Retry_intervals is mandatory");
-              }
-              if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
-              {
-                  ErrorMessage.Add("Retry_attempts is mandatory");
-              }
-              if (ErrorMessage.Count > 0)
-              {
-                  return Ok(new { ErrorMessage });
-              }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
+         {
+             ErrorMessage.Add("Start_date is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
+         {
+             ErrorMessage.Add("end_date is mandatory");
+         }
 
-              string CMquery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER where VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
-              using (SqlCommand CMcmd = new SqlCommand(CMquery, con))
-              {
-                  CMcmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
-                  //cmd.ExecuteNonQuery();
-                  int count = (int)CMcmd.ExecuteScalar();
-                  if (count > 0)
-                  {
-                      return Content($"Campaign ID already exists. Please use a unique Campaign ID ");
-                  }
-                  else
-                  {
-                      string checkQuery = "SELECT COUNT(*) FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE'";
-                      using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
-                      {
-                          int DNIScount = (int)cmdCheck.ExecuteScalar();
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
+         {
+             ErrorMessage.Add("Start_time is mandatory");
+         }
 
-                          if (DNIScount > 0)
-                          {
-                              string selectquery = "SELECT TOP(1) VAR_DNIS FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE' ORDER BY VAR_DNIS";
-                              using (SqlCommand checkDnisCmd = new SqlCommand(selectquery, con))
-                              using (SqlDataReader reader = checkDnisCmd.ExecuteReader())
-                              {
-                                  if (reader.Read())
-                                  {
-                                      string selectedDnis = reader["VAR_DNIS"].ToString();
-                                      reader.Close();
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
+         {
+             ErrorMessage.Add("End_time is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
+         {
+             ErrorMessage.Add("Dialing_Mode is mandatory");
+         }
 
-                                      string DNISquery = @"UPDATE TBL_DNIS SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME, 
-                                                           VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID,VAR_MODE='INUSE' WHERE VAR_DNIS=@VAR_DNIS";
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
+         {
+             ErrorMessage.Add("Retry_intervals is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
+         {
+             ErrorMessage.Add("Retry_attempts is mandatory");
+         }
+         if (ErrorMessage.Count > 0)
+         {
+             return Ok(new { ErrorMessage });
+         }
+         using (SqlConnection con = new SqlConnection(_dbConnection))
+         {
+             con.Open();
 
-                                      using (SqlCommand cmd = new SqlCommand(DNISquery, con))
-                                      {
-                                          cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
-                                          cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", dNIS_TABLE.campaign_name);
-                                          cmd.Parameters.AddWithValue("@VAR_DNIS", selectedDnis);
-                                          cmd.ExecuteNonQuery();
+            
 
-                                          string insertQuery = @"INSERT INTO TBL_CAMPAIGN_MASTER
-                                                                 (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
-                                                                 VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
-                                                                 VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, 
-                                                                 VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS, VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
-                                                                 VALUES
-                                                                 (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
-                                                                 @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
-                                                                 @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, 
-                                                                 @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS, @VAR_IS_RECORDING, NULL, NULL)";
+             string CMquery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER_V2 where VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
+             using (SqlCommand CMcmd = new SqlCommand(CMquery, con))
+             {
+                 CMcmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
+                 //cmd.ExecuteNonQuery();
+                 int count = (int)CMcmd.ExecuteScalar();
+                 if (count > 0)
+                 {
+                     return Content($"Campaign ID already exists. Please use a unique Campaign ID ");
+                 }
+                 else
+                 {
+                     string checkQuery = "SELECT COUNT(*) FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE'";
+                     using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
+                     {
+                         int DNIScount = (int)cmdCheck.ExecuteScalar();
 
-                                          using (SqlCommand Icmd = new SqlCommand(insertQuery, con))
-                                          {
-                                              AddCampaignParameters(Icmd, dNIS_TABLE);
-                                              int rows = Icmd.ExecuteNonQuery();
+                         if (DNIScount > 0)
+                         {
+                             string selectquery = "SELECT TOP(1) VAR_DNIS FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE' ORDER BY VAR_DNIS";
+                             using (SqlCommand checkDnisCmd = new SqlCommand(selectquery, con))
+                             using (SqlDataReader reader = checkDnisCmd.ExecuteReader())
+                             {
+                                 if (reader.Read())
+                                 {
+                                     string selectedDnis = reader["VAR_DNIS"].ToString();
+                                     reader.Close();
 
-                                              if (rows > 0)
-                                              {
-                                                  return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
-                                              }
-                                              else
-                                              {
-                                                  return Content("Insert failed");
-                                              }
-                                          }
-                                      }
-                                  }
-                                  else
-                                  {
-                                      return Content($"{dNIS_TABLE.campaign_id} Campaign ID is already created");
-                                  }
-                              }
-                          }
-                          else
-                          {
-                              return Content("No Data Found in NOTINUSE");
-                          }
-                      }
-                  }
+                                     string DNISquery = @"UPDATE TBL_DNIS SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME, 
+                                                          VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID,VAR_MODE='INUSE' WHERE VAR_DNIS=@VAR_DNIS";
 
-              }
+                                     using (SqlCommand cmd = new SqlCommand(DNISquery, con))
+                                     {
+                                         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
+                                         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", dNIS_TABLE.campaign_name);
+                                         cmd.Parameters.AddWithValue("@VAR_DNIS", selectedDnis);
+                                         cmd.ExecuteNonQuery();
 
-          }
-      }
+                                         string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER_V2 
+                               (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
+                               VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIN_CREATED_DATE, VAR_CAMPAIN_START_DATE, VAR_CAMPAIN_END_DATE, 
+                               VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
+                               VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, 
+                               VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS, VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
+                               VALUES
+                               (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
+                               @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIN_CREATED_DATE, @VAR_CAMPAIN_START_DATE, @VAR_CAMPAIN_END_DATE,
+                               @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
+                               @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, 
+                               @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS, @VAR_IS_RECORDING, NULL, NULL)";
 
-      catch (Exception ex)
-      {
-          return Content("Unexpected Error: " + ex.Message);
-      }
-  }
 
-  [HttpPut("UpdateCampaignMaster")]
-  public IActionResult UpdateCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
-  {
-      try
-      {
-          var ErrorMessage = new List<string>();
+                                         using (SqlCommand Icmd = new SqlCommand(insertquery, con))
+                                         {
+                                             AddCampaignParameters(Icmd, dNIS_TABLE);
+                                             int rows = Icmd.ExecuteNonQuery();
 
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
-          {
-              ErrorMessage.Add("Campaign_id is mandatory");
-          }
+                                             if (rows > 0)
+                                             {
+                                                 return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
+                                             }
+                                             else
+                                             {
+                                                 return Content("Insert failed");
+                                             }
+                                         }
+                                     }
+                                 }
+                                 else
+                                 {
+                                     return Content($"{dNIS_TABLE.campaign_id} Campaign ID is already created");
+                                 }
+                             }
+                         }
+                         else
+                         {
+                             return Content("No Data Found in NOTINUSE");
+                         }
+                     }
+                 }
 
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
-          {
-              ErrorMessage.Add("Campaign_Name is mandatory");
-          }
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
-          {
-              ErrorMessage.Add("Status is mandatory");
-          }
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
-          {
-              ErrorMessage.Add("Time_Zone is mandatory");
-          }
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
-          {
-              ErrorMessage.Add("Start_Date is mandatory");
-          }
-          else if (!DateTime.TryParse(dNIS_TABLE.Start_Date, out DateTime startDate))
-          {
-              ErrorMessage.Add("Start_Date must be a valid date");
-          }
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
-          {
-              ErrorMessage.Add("End_Date is mandatory");
-          }
-          else if (!DateTime.TryParse(dNIS_TABLE.End_Date, out DateTime parsedEndDate))
-          {
-              ErrorMessage.Add("End_Date must be a valid date");
-          }
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
-          {
-              ErrorMessage.Add("Dialing_Mode is mandatory");
-          }
+             }
 
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
-          {
-              ErrorMessage.Add("Retry_intervals is mandatory");
-          }
-          if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
-          {
-              ErrorMessage.Add("Retry_attempts is mandatory");
-          }
-          if (ErrorMessage.Count > 0)
-          {
-              return Ok(new { ErrorMessage });
-          }
-          string Campaignquery = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_CAMPAIGN_NAME = @VAR_CAMPAIGN_NAME,
-          VAR_STATUS = @VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION = @VAR_CAMPAIGN_DESCRIPTION,
-          VAR_CAMPAIGN_TYPE = @VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE = @VAR_TIME_ZONE,
-          VAR_CAMPAIGN_START_TIME = @VAR_CAMPAIGN_START_TIME,VAR_CAMPAIGN_END_TIME = @VAR_CAMPAIGN_END_TIME,
-          VAR_DIALING_MODE = @VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS = @VAR_MAX_CONCURRENT_CALLS,
-          VAR_CALL_DURATION_LIMIT = @VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS = @VAR_RETRY_ATTEMPTS,
-          VAR_RETRY_INTERVALS = @VAR_RETRY_INTERVALS,VAR_TEAMS = @VAR_TEAMS,
-          VAR_MAX_LEADS = @VAR_MAX_LEADS,VAR_SKILL_TAGS = @VAR_SKILL_TAGS,
-          VAR_IS_RECORDING = @VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+         }
+     }
 
-          using (SqlConnection UCon = new SqlConnection(_dbConnection))
-          {
-              UCon.Open();
+     catch (Exception ex)
+     {
+         return Content("Unexpected Error: " + ex.Message);
+     }
+ }
+ [HttpPut("UpdateCampaignMaster")]
+ public IActionResult UpdateCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
+ {
+     try
+     {
+         List<string> ErrorMessage = new List<string>();
 
-              using (SqlCommand cmd = new SqlCommand(Campaignquery, UCon))
-              {
-                  // Add parameters
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
+         {
+             ErrorMessage.Add("Campaign_id is mandatory");
+         }
 
-                  AddCampaignParameters(cmd, dNIS_TABLE);
-                  int Count = cmd.ExecuteNonQuery();
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
+         {
+             ErrorMessage.Add("Campaign_Name is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
+         {
+             ErrorMessage.Add("Status is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
+         {
+             ErrorMessage.Add("Time_Zone is mandatory");
+         }
 
-                  if (Count > 0)
-                  {
-                      //  return Ok(new { Message = "Campaign updated successfully", CampaignID = dNIS_TABLE.campaign_id });
-                      return Ok($" Campaign updated successfully  {dNIS_TABLE.campaign_id}");
-                  }
-                  else
-                  {
-                      return NotFound(new { Message = "No record found with the provided Campaign ID" });
-                  }
-              }
-          }
-      }
-      catch (Exception ex)
-      {
-          return StatusCode(500, new { Message = "An error occurred while updating the campaign.", Error = ex.Message });
-      }
-  }
-  
+
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
+         {
+             ErrorMessage.Add("Start_date is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
+         {
+             ErrorMessage.Add("end_date is mandatory");
+         }
+
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
+         {
+             ErrorMessage.Add("Start_time is mandatory");
+         }
+
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
+         {
+             ErrorMessage.Add("End_time is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
+         {
+             ErrorMessage.Add("Dialing_Mode is mandatory");
+         }
+
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
+         {
+             ErrorMessage.Add("Retry_intervals is mandatory");
+         }
+         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
+         {
+             ErrorMessage.Add("Retry_attempts is mandatory");
+         }
+         if (ErrorMessage.Count > 0)
+         {
+             return Ok(new { ErrorMessage });
+         }
+         string Campaignquery = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_CAMPAIGN_NAME = @VAR_CAMPAIGN_NAME,
+         VAR_STATUS = @VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION = @VAR_CAMPAIGN_DESCRIPTION,
+         VAR_CAMPAIGN_TYPE = @VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE = @VAR_TIME_ZONE,VAR_CAMPAIN_CREATED_DATE=@VAR_CAMPAIN_CREATED_DATE,
+         VAR_CAMPAIN_START_DATE=@VAR_CAMPAIN_START_DATE,VAR_CAMPAIN_END_DATE=@VAR_CAMPAIN_END_DATE,
+         VAR_CAMPAIGN_START_TIME = @VAR_CAMPAIGN_START_TIME,VAR_CAMPAIGN_END_TIME = @VAR_CAMPAIGN_END_TIME,
+         VAR_DIALING_MODE = @VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS = @VAR_MAX_CONCURRENT_CALLS,
+         VAR_CALL_DURATION_LIMIT = @VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS = @VAR_RETRY_ATTEMPTS,
+         VAR_RETRY_INTERVALS = @VAR_RETRY_INTERVALS,VAR_TEAMS = @VAR_TEAMS,
+         VAR_MAX_LEADS = @VAR_MAX_LEADS,VAR_SKILL_TAGS = @VAR_SKILL_TAGS,
+         VAR_IS_RECORDING = @VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+         using (SqlConnection UCon = new SqlConnection(_dbConnection))
+         {
+             UCon.Open();
+
+             using (SqlCommand cmd = new SqlCommand(Campaignquery, UCon))
+             {
+                 // Add parameters
+
+                 AddCampaignParameters(cmd, dNIS_TABLE);
+                 int Count = cmd.ExecuteNonQuery();
+
+                 if (Count > 0)
+                 {                            
+                     return Ok($" Campaign updated successfully  {dNIS_TABLE.campaign_id}");
+                 }
+                 else
+                 {
+                     return NotFound(new { Message = "No record found with the provided Campaign ID" });
+                 }
+             }
+         }
+     }
+     catch (Exception ex)
+     {
+         return StatusCode(500, new { Message = "An error occurred while updating the campaign.", Error = ex.Message });
+     }
+ }
+
+      
  private void AddCampaignParameters(SqlCommand cmd, DNIS_TABLE dNIS_TABLE)
  {
      cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
@@ -1398,22 +1411,16 @@ private bool UploadToSftp(string filePath, string remoteDir)
      cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", dNIS_TABLE.Campaign_Description ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", dNIS_TABLE.Campaign_Type ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", dNIS_TABLE.Time_Zone);
-
-     if (DateTime.TryParse(dNIS_TABLE.Start_Date, out DateTime startDate))
-         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", startDate);
-     else
-         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", DBNull.Value);
-
-     if (DateTime.TryParse(dNIS_TABLE.End_Date, out DateTime endDate))
-         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", endDate);
-     else
-         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", DBNull.Value);
-
-     cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", dNIS_TABLE.Dialing_Mode);
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIN_CREATED_DATE", DateTime.Now);
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIN_START_DATE", dNIS_TABLE.Start_Date ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIN_END_DATE", dNIS_TABLE.End_Date ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", dNIS_TABLE.Start_Time ?? (object)DBNull.Value); // TimeSpan or DateTime
+     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", dNIS_TABLE.End_Time ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", dNIS_TABLE.Dialing_Mode ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", dNIS_TABLE.Max_Concurrent_Calls ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", dNIS_TABLE.Call_duration_Limit ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_RETRY_ATTEMPTS", dNIS_TABLE.Retry_attempts);
-     cmd.Parameters.AddWithValue("@VAR_RETRY_INTERVALS", dNIS_TABLE.Retry_intervals);
+     cmd.Parameters.AddWithValue("@VAR_RETRY_ATTEMPTS", dNIS_TABLE.Retry_attempts ?? (object)DBNull.Value);
+     cmd.Parameters.AddWithValue("@VAR_RETRY_INTERVALS", dNIS_TABLE.Retry_intervals ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_TEAMS", dNIS_TABLE.Teams ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", dNIS_TABLE.Max_Leads ?? (object)DBNull.Value);
      cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", dNIS_TABLE.Skill_Tags ?? (object)DBNull.Value);
