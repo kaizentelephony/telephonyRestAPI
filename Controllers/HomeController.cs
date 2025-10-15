@@ -1435,7 +1435,7 @@ private bool UploadToSftp(string filePath, string remoteDir)
     [ApiController]
 
     [Route("api/v2/[controller]")]
-    public class uploadController : Controller
+    public class IVRController : Controller
     {
 
         private readonly IRestClient _restClient;
@@ -1449,7 +1449,7 @@ private bool UploadToSftp(string filePath, string remoteDir)
 
       
 
-        public uploadController(IConfiguration configuration)
+        public IVRController(IConfiguration configuration)
         {
             //string dbcon=""
             lg = new Log();
