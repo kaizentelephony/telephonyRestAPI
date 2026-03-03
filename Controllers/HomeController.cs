@@ -2179,9 +2179,6 @@ namespace PushAPIContractNumber
                 });
             }
 
-
-
-
         }
     }
 }
