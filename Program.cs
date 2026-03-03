@@ -1,9 +1,9 @@
-using OfficeOpenXml;
+// using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ✅ Correct EPPlus license setting
-ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+// ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
