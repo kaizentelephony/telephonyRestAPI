@@ -1,12 +1,18 @@
-﻿using Benz.log;
+using Benz.log;
 using Call_Details_API.Helpers;
 using Call_Details_API.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using PushAPI.Model;
 using Renci.SshNet;
-using RestSharp;
+using Renci.SshNet.Sftp;
+//using RestSharp;
+using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net;
@@ -19,7 +25,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using Campaign_Master.Model;
 using static PushAPI.Model.TBL_CALLDETAILS;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -31,23 +36,26 @@ namespace PushAPIContractNumber
     [Route("api/v1/[controller]")]
     public class ivrController : Controller
     {
-        private readonly IRestClient _restClient;
+        //private readonly IRestClient _restClient;
         private readonly string _dbConnection;
-        private readonly string UploadFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads"); // Server uploads folder
+        private readonly string UploadFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads");
         private Log lg;
-        private readonly string _host = "192.168.5.61";
-        private readonly int _port = 22;
-        private readonly string _username = "root";
-        private readonly string _password = "Kaizen%$#@!";
-       
+        const string host = "192.168.5.61";
+        const int port = 22;
+        const string username = "root";
+        const string password = "Kaizen%$#@!";
+
 
         public ivrController(IConfiguration configuration)
         {
             //string dbcon=""
-            lg = new Log();
+            Log lg = new Log();
             lg.lodwrite("databaseconnection");
             _dbConnection = configuration.GetConnectionString("dbcon");
         }
+
+
+
         private void UpdateRowscalldetails(string data)
         {
             using (SqlConnection sqlcon = new SqlConnection(_dbConnection))
@@ -146,8 +154,6 @@ namespace PushAPIContractNumber
 
             return Ok(results);
         }
-
-
         /// GetBy AgentId
         [HttpPost("agenthistory")]
         public IActionResult getcalltranferdetailsbyagentid([FromForm] string agent_id)
@@ -197,7 +203,7 @@ namespace PushAPIContractNumber
                                                 transfer_status = reader["var_transferstatus"]?.ToString(),
 
                                             };
-                                          // UpdateRows(data_.unique_id.ToString());
+                                            // UpdateRows(data_.unique_id.ToString());
                                             results.Add(data_);
 
                                         }
@@ -226,8 +232,6 @@ namespace PushAPIContractNumber
 
             return Ok(results);
         }
-
-       
 
 
         [HttpPost("getcalldetails")]
@@ -277,7 +281,7 @@ namespace PushAPIContractNumber
                                                 dnis = reader["VAR_DNIS"]?.ToString(),
                                                 Call_Type = reader["VAR_CALL_TYPE"]?.ToString(),
                                             };
-                                         //   UpdateRowscalldetails(data.unique_id);
+                                            //   UpdateRowscalldetails(data.unique_id);
                                             results.Add(data);
 
                                         }
@@ -308,9 +312,8 @@ namespace PushAPIContractNumber
             }
 
             return Ok(results);
-        }    
+        }
 
-        
 
         [HttpPost("savefile")]
         public IActionResult FileDownload([FromForm] string Unique_id)
@@ -348,7 +351,7 @@ namespace PushAPIContractNumber
                         string FilePath = Path.Combine(result.ToString(), $"{Unique_id}.wav").Replace("\\", "/");
                         lg.lodwrite($"SFTP File Path: {FilePath}");
 
-                        using (var client = new SftpClient(_host, _port, _username, _password))
+                        using (var client = new SftpClient(host, port, username, password))
                         {
                             client.Connect();
 
@@ -379,281 +382,6 @@ namespace PushAPIContractNumber
                 return StatusCode(500, "Internal server error occurred while processing the file.");
             }
         }
-
-//        [HttpPost("outdial")]
-// public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string campaignId)
-// {
-//     if (file == null || file.Length == 0)
-//         return BadRequest("No file uploaded");
-//     if (string.IsNullOrWhiteSpace(campaignId))
-//         return BadRequest("Campaign Id is missing");
-
-//     lg.lodwrite("=== UploadFile Entry ===");
-
-//     Directory.CreateDirectory(UploadFolder);
-//     string filePath = Path.Combine(UploadFolder, file.FileName);
-//     using (var fs = new FileStream(filePath, FileMode.Create))
-//         file.CopyTo(fs);
-
-//     string waitTime = "0";
-//     string maxRetries = "0";
-//     string campNameOriginal = string.Empty; // for .call content
-//     string campNameUpd = string.Empty;      // for folders
-//     string campId = string.Empty;
-//     string campaignStatus = string.Empty;
-
-//     try
-//     {
-//         using (SqlConnection con = new SqlConnection(_dbConnection))
-//         {
-//             con.Open();
-//             string q = @"SELECT TOP 1 VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_RETRY_INTERVALS, VAR_RETRY_ATTEMPTS, VAR_STATUS FROM TBL_CAMPAIGN_MASTER WHERE VAR_CAMPAIGN_ID = @cid";
-//             using (SqlCommand cmd = new SqlCommand(q, con))
-//             {
-//                 cmd.Parameters.AddWithValue("@cid", campaignId);
-//                 using (SqlDataReader r = cmd.ExecuteReader())
-//                 {
-//                     if (r.Read())
-//                     {
-//                         campId = r["VAR_CAMPAIGN_ID"]?.ToString();
-//                         campNameOriginal = r["VAR_CAMPAIGN_NAME"]?.ToString();
-//                         waitTime = r["VAR_RETRY_INTERVALS"]?.ToString() ?? "0";
-//                         maxRetries = r["VAR_RETRY_ATTEMPTS"]?.ToString() ?? "0";
-//                         campaignStatus = r["VAR_STATUS"]?.ToString() ?? "";
-
-//                         campNameUpd = campNameOriginal.Replace(" ", "-") + "_" + campId;
-//                     }
-//                     else
-//                     {
-//                         return NotFound($"Campaign {campaignId} not found");
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     catch (Exception ex)
-//     {
-//         lg.lodwrite("Error reading campaign: " + ex.Message);
-//         return StatusCode(500, "DB error while reading campaign");
-//     }
-
-//     if (campaignStatus.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase))
-//     {
-//         return Ok($"Request cannot be processed for Campaign_ID {campaignId} .");
-//     }
-
-//     string sftpBase = "/var/spool/asterisk/CallFile";
-//     string sftpCampaignFolder = $"{sftpBase}/{campNameUpd}";
-//     string localCampaignFolder = Path.Combine(UploadFolder, campNameUpd);
-//     Directory.CreateDirectory(localCampaignFolder);
-
-//     try
-//     {
-//         using (SqlConnection con = new SqlConnection(_dbConnection))
-//         {
-//             con.Open();
-//             string uppath = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_SOURCE_FILR_PATH=@src, VAR_DESTINATION_FILE_PATH=@dst WHERE VAR_CAMPAIGN_ID=@cid";
-//             using (SqlCommand ucmd = new SqlCommand(uppath, con))
-//             {
-//                 ucmd.Parameters.AddWithValue("@src", filePath);
-//                 ucmd.Parameters.AddWithValue("@dst", sftpCampaignFolder);
-//                 ucmd.Parameters.AddWithValue("@cid", campaignId);
-//                 ucmd.ExecuteNonQuery();
-//             }
-//         }
-//     }
-//     catch (Exception ex)
-//     {
-//         lg.lodwrite("Error updating paths: " + ex.Message);
-//     }
-
-//     var rows = FileDataReader.ReadTable(filePath).ToList();
-//     if (!rows.Any())
-//         return BadRequest("No data in excel");
-
-//     List<string> callFiles = new();
-//     Random rnd = new Random();
-
-//     foreach (var row in rows.Skip(1)) 
-//     {
-//         if (row.Length < 2) continue;
-
-//         string phoneNumber = row[0];
-//         string extension = row[1];
-//         string uniqueId = rnd.Next(100000, 999999).ToString();
-
-//         string fileName = $"{phoneNumber}_{campId}_{uniqueId}.call";
-//         string callFile = Path.Combine(localCampaignFolder, fileName);
-
-//         try
-//         {
-//             System.IO.File.WriteAllLines(callFile, new[]
-//             {
-//         $"Channel:PJSIP/{phoneNumber}@out",
-//         "WaitTime:30",
-//         $"Maxretries:{maxRetries}",
-//         $"RetryTime:{waitTime}",
-//         "Context:from-interval",
-//         $"Extension:{extension}",
-//         $"setvar:caller_id=out{phoneNumber}",
-//         $"setvar:campaign_id={campId}",
-//         $"setvar:campaign_name={campNameOriginal}", 
-//         $"setvar:unique_id={uniqueId}",
-//         "Priority:1",
-//         "Archive:yes"
-//     });
-
-//             callFiles.Add(callFile);
-//         }
-//         catch (Exception ex)
-//         {
-//             lg.lodwrite($"Error writing call file {phoneNumber}: " + ex.Message);
-//         }
-//     }
-
-//     var success = new List<string>();
-//     var failed = new List<string>();
-//     foreach (var cf in callFiles)
-//     {
-//         if (UploadToSftp(cf, sftpCampaignFolder))
-//             success.Add(Path.GetFileName(cf));
-//         else
-//             failed.Add(Path.GetFileName(cf));
-//     }
-
-//     try
-//     {
-//         using (SqlConnection con = new SqlConnection(_dbConnection))
-//         {
-//             con.Open();
-//             string upStatus = @"UPDATE TBL_CAMPAIGN_MASTER SET VAR_STATUS='ACTIVE' WHERE VAR_CAMPAIGN_ID=@cid";
-//             using (SqlCommand cmd = new SqlCommand(upStatus, con))
-//             {
-//                 cmd.Parameters.AddWithValue("@cid", campaignId);
-//                 cmd.ExecuteNonQuery();
-//             }
-//         }
-//     }
-//     catch (Exception ex)
-//     {
-//         lg.lodwrite("Error updating status: " + ex.Message);
-//     }
-
-//     return Ok(new
-//     {
-//         SuccessCount = success.Count,
-//         FailedCount = failed.Count,
-//     });
-// }
-        [HttpPost("outdial")]
-        public async Task<IActionResult> UploadFile(
-    [FromForm] IFormFile file,
-    [FromForm] string campaign_id)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded!");
-
-            TimeSpan campaignStartTime;
-
-            using (SqlConnection con = new SqlConnection(_dbConnection))
-            {
-                await con.OpenAsync();
-
-                using SqlCommand cmd = new SqlCommand(
-                    @"SELECT VAR_CAMPAIGN_START_TIME
-              FROM TBL_CAMPAIGN_MASTER_V2
-              WHERE VAR_CAMPAIGN_ID = @CampaignId", con);
-
-                cmd.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaign_id;
-
-                object result = await cmd.ExecuteScalarAsync();
-
-                if (result == null || result == DBNull.Value)
-                    return BadRequest("Invalid Campaign ID");
-
-                campaignStartTime = (TimeSpan)result;
-            }
-
-            Directory.CreateDirectory(UploadFolder);
-            string filePath = Path.Combine(UploadFolder, file.FileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-                await file.CopyToAsync(stream);
-
-            var rows = FileDataReader.ReadTable(filePath).ToList();
-            if (rows.Count <= 1)
-                return BadRequest("No data rows found");
-
-            ConcurrentBag<TBL_CAMPAIGN_DETAILS> records = new();
-
-            Parallel.ForEach(rows.Skip(1), row =>
-            {
-                if (row.Length < 2) return;
-
-                string callerId = row[0]?.ToString()?.Trim();
-                string extension = row[1]?.ToString()?.Trim();
-
-                if (string.IsNullOrEmpty(callerId) || string.IsNullOrEmpty(extension))
-                    return;
-
-                records.Add(new TBL_CAMPAIGN_DETAILS
-                {
-                    VAR_CAMPAIGN_ID = campaign_id,
-                    VAR_CAMPAIGN_START_TIME = campaignStartTime,
-                    VAR_CALLER_ID = callerId,
-                    VAR_CHANNEL_ID = callerId,
-                    VAR_WAIT_TIME = 30,
-                    VAR_MAXRETRIES = 0,
-                    VAR_RETRYTIME = 0,
-                    VAR_EXTENSION = extension,
-                    VAR_STATUS = "PENDING"
-                });
-            });
-
-            BulkInsert(records.ToList());
-
-            return Ok(new
-            {
-                Message = "Outdial Call Successfully Created",
-                CampaignId = campaign_id,
-                TotalInserted = records.Count
-            });
-        }
-
-
-private bool UploadToSftp(string filePath, string remoteDir)
-{
-    const string host = "192.168.5.61";
-    const int port = 22;
-    const string username = "root";
-    const string password = "Kaizen%$#@!";
-
-    try
-    {
-        using var client = new SftpClient(host, port, username, password);
-        client.Connect();
-
-        if (!client.Exists(remoteDir))
-        {
-            client.CreateDirectory(remoteDir);
-        }
-
-        string remotePath = $"{remoteDir}/{Path.GetFileName(filePath)}";
-        Console.WriteLine($"Uploading {filePath} → {remotePath}");
-
-        using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-        client.UploadFile(fileStream, remotePath, true);
-
-        client.Disconnect();
-        return true;
-    }
-    catch (Exception ex)
-    {
-        lg.lodwrite($"Upload failed for {filePath}: {ex.Message}");
-        return false;
-    }
-}
-
 
         [HttpPost("updateuniqueidbycalldetails")]
         public IActionResult UpdateUniqueIds([FromBody] calldetails request)
@@ -718,7 +446,6 @@ private bool UploadToSftp(string filePath, string remoteDir)
             }
             return Ok("Success");
         }
-
 
         private void UpdateRowscalltransferdetails(string Tdata)
         {
@@ -794,7 +521,7 @@ private bool UploadToSftp(string filePath, string remoteDir)
             return Ok("Success");
         }
 
-        #region
+
         [HttpGet("allcalls")]
 
         public IActionResult GetAllCallDetail()
@@ -894,8 +621,6 @@ private bool UploadToSftp(string filePath, string remoteDir)
             return Ok(results);
         }
 
-
-
         [HttpGet("TodaywisecallDetails")]
         public IActionResult TodayCALLDETAILS()
         {
@@ -974,8 +699,7 @@ private bool UploadToSftp(string filePath, string remoteDir)
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        #endregion
-        
+
         [HttpGet("alltransfer")]
         public IActionResult GetAll_CallTransferDetails()
         {
@@ -1119,7 +843,7 @@ private bool UploadToSftp(string filePath, string remoteDir)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-        }        
+        }
 
         [HttpGet("csvtransactiondetail")]
         public IActionResult csvTransactionDetail()
@@ -1217,521 +941,1247 @@ private bool UploadToSftp(string filePath, string remoteDir)
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-       
-   [HttpPost("CreateCampaignMaster")]
- public IActionResult InsertdNIS_TABLE([FromBody] DNIS_TABLE dNIS_TABLE)
- {
-     try
-     {
-         List<string> ErrorMessage = new List<string>();
 
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
-         {
-             ErrorMessage.Add("Campaign_id is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
-         {
-             ErrorMessage.Add("Campaign_Name is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
-         {
-             ErrorMessage.Add("Status is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
-         {
-             ErrorMessage.Add("Time_Zone is mandatory");
-         }
-
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
-         {
-             ErrorMessage.Add("Start_date is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
-         {
-             ErrorMessage.Add("end_date is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
-         {
-             ErrorMessage.Add("Start_time is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
-         {
-             ErrorMessage.Add("End_time is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
-         {
-             ErrorMessage.Add("Dialing_Mode is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
-         {
-             ErrorMessage.Add("Retry_intervals is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
-         {
-             ErrorMessage.Add("Retry_attempts is mandatory");
-         }
-         if (ErrorMessage.Count > 0)
-         {
-             return Ok(new { ErrorMessage });
-         }
-         using (SqlConnection con = new SqlConnection(_dbConnection))
-         {
-             con.Open();
-
-            
-
-             string CMquery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER_V2 where VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
-             using (SqlCommand CMcmd = new SqlCommand(CMquery, con))
-             {
-                 CMcmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
-                 //cmd.ExecuteNonQuery();
-                 int count = (int)CMcmd.ExecuteScalar();
-                 if (count > 0)
-                 {
-                     return Content($"Campaign ID already exists. Please use a unique Campaign ID ");
-                 }
-                 else
-                 {
-                     string checkQuery = "SELECT COUNT(*) FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE'";
-                     using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
-                     {
-                         int DNIScount = (int)cmdCheck.ExecuteScalar();
-
-                         if (DNIScount > 0)
-                         {
-                             string selectquery = "SELECT TOP(1) VAR_DNIS FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE' ORDER BY VAR_DNIS";
-                             using (SqlCommand checkDnisCmd = new SqlCommand(selectquery, con))
-                             using (SqlDataReader reader = checkDnisCmd.ExecuteReader())
-                             {
-                                 if (reader.Read())
-                                 {
-                                     string selectedDnis = reader["VAR_DNIS"].ToString();
-                                     reader.Close();
-
-                                     string DNISquery = @"UPDATE TBL_DNIS SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME, 
-                                                          VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID,VAR_MODE='INUSE' WHERE VAR_DNIS=@VAR_DNIS";
-
-                                     using (SqlCommand cmd = new SqlCommand(DNISquery, con))
-                                     {
-                                         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
-                                         cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", dNIS_TABLE.campaign_name);
-                                         cmd.Parameters.AddWithValue("@VAR_DNIS", selectedDnis);
-                                         cmd.ExecuteNonQuery();
-
-                                         string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER_V2 
-                               (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
-                               VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIN_CREATED_DATE, VAR_CAMPAIN_START_DATE, VAR_CAMPAIN_END_DATE, 
-                               VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
-                               VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, 
-                               VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS, VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
-                               VALUES
-                               (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
-                               @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIN_CREATED_DATE, @VAR_CAMPAIN_START_DATE, @VAR_CAMPAIN_END_DATE,
-                               @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
-                               @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, 
-                               @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS, @VAR_IS_RECORDING, NULL, NULL)";
-
-
-                                         using (SqlCommand Icmd = new SqlCommand(insertquery, con))
-                                         {
-                                             AddCampaignParameters(Icmd, dNIS_TABLE);
-                                             int rows = Icmd.ExecuteNonQuery();
-
-                                             if (rows > 0)
-                                             {
-                                                 return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
-                                             }
-                                             else
-                                             {
-                                                 return Content("Insert failed");
-                                             }
-                                         }
-                                     }
-                                 }
-                                 else
-                                 {
-                                     return Content($"{dNIS_TABLE.campaign_id} Campaign ID is already created");
-                                 }
-                             }
-                         }
-                         else
-                         {
-                             return Content("No Data Found in NOTINUSE");
-                         }
-                     }
-                 }
-
-             }
-
-         }
-     }
-
-     catch (Exception ex)
-     {
-         return Content("Unexpected Error: " + ex.Message);
-     }
- }
- [HttpPut("UpdateCampaignMaster")]
- public IActionResult UpdateCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
- {
-     try
-     {
-         List<string> ErrorMessage = new List<string>();
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
-         {
-             ErrorMessage.Add("Campaign_id is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
-         {
-             ErrorMessage.Add("Campaign_Name is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
-         {
-             ErrorMessage.Add("Status is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
-         {
-             ErrorMessage.Add("Time_Zone is mandatory");
-         }
-
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
-         {
-             ErrorMessage.Add("Start_date is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
-         {
-             ErrorMessage.Add("end_date is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
-         {
-             ErrorMessage.Add("Start_time is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
-         {
-             ErrorMessage.Add("End_time is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
-         {
-             ErrorMessage.Add("Dialing_Mode is mandatory");
-         }
-
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
-         {
-             ErrorMessage.Add("Retry_intervals is mandatory");
-         }
-         if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
-         {
-             ErrorMessage.Add("Retry_attempts is mandatory");
-         }
-         if (ErrorMessage.Count > 0)
-         {
-             return Ok(new { ErrorMessage });
-         }
-         string Campaignquery = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_CAMPAIGN_NAME = @VAR_CAMPAIGN_NAME,
-         VAR_STATUS = @VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION = @VAR_CAMPAIGN_DESCRIPTION,
-         VAR_CAMPAIGN_TYPE = @VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE = @VAR_TIME_ZONE,VAR_CAMPAIN_CREATED_DATE=@VAR_CAMPAIN_CREATED_DATE,
-         VAR_CAMPAIN_START_DATE=@VAR_CAMPAIN_START_DATE,VAR_CAMPAIN_END_DATE=@VAR_CAMPAIN_END_DATE,
-         VAR_CAMPAIGN_START_TIME = @VAR_CAMPAIGN_START_TIME,VAR_CAMPAIGN_END_TIME = @VAR_CAMPAIGN_END_TIME,
-         VAR_DIALING_MODE = @VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS = @VAR_MAX_CONCURRENT_CALLS,
-         VAR_CALL_DURATION_LIMIT = @VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS = @VAR_RETRY_ATTEMPTS,
-         VAR_RETRY_INTERVALS = @VAR_RETRY_INTERVALS,VAR_TEAMS = @VAR_TEAMS,
-         VAR_MAX_LEADS = @VAR_MAX_LEADS,VAR_SKILL_TAGS = @VAR_SKILL_TAGS,
-         VAR_IS_RECORDING = @VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
-
-         using (SqlConnection UCon = new SqlConnection(_dbConnection))
-         {
-             UCon.Open();
-
-             using (SqlCommand cmd = new SqlCommand(Campaignquery, UCon))
-             {
-                 // Add parameters
-
-                 AddCampaignParameters(cmd, dNIS_TABLE);
-                 int Count = cmd.ExecuteNonQuery();
-
-                 if (Count > 0)
-                 {                            
-                     return Ok($" Campaign updated successfully  {dNIS_TABLE.campaign_id}");
-                 }
-                 else
-                 {
-                     return NotFound(new { Message = "No record found with the provided Campaign ID" });
-                 }
-             }
-         }
-     }
-     catch (Exception ex)
-     {
-         return StatusCode(500, new { Message = "An error occurred while updating the campaign.", Error = ex.Message });
-     }
- }
-
-      
- private void AddCampaignParameters(SqlCommand cmd, DNIS_TABLE dNIS_TABLE)
- {
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", dNIS_TABLE.campaign_name);
-     cmd.Parameters.AddWithValue("@VAR_STATUS", dNIS_TABLE.Status);
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", dNIS_TABLE.Campaign_Description ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", dNIS_TABLE.Campaign_Type ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", dNIS_TABLE.Time_Zone);
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIN_CREATED_DATE", DateTime.Now);
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIN_START_DATE", dNIS_TABLE.Start_Date ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIN_END_DATE", dNIS_TABLE.End_Date ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", dNIS_TABLE.Start_Time ?? (object)DBNull.Value); // TimeSpan or DateTime
-     cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", dNIS_TABLE.End_Time ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", dNIS_TABLE.Dialing_Mode ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", dNIS_TABLE.Max_Concurrent_Calls ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", dNIS_TABLE.Call_duration_Limit ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_RETRY_ATTEMPTS", dNIS_TABLE.Retry_attempts ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_RETRY_INTERVALS", dNIS_TABLE.Retry_intervals ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_TEAMS", dNIS_TABLE.Teams ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", dNIS_TABLE.Max_Leads ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", dNIS_TABLE.Skill_Tags ?? (object)DBNull.Value);
-     cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", dNIS_TABLE.Is_Recording ?? (object)DBNull.Value);
- }
- }
-
-
-
-
-    
-    [ApiController]
-
-    [Route("api/v2/[controller]")]
-    public class IVRController : Controller
-    {
-
-        private readonly IRestClient _restClient;
-        private readonly string _dbConnection;
-        private readonly string UploadFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads");
-        private Log lg;
-        private readonly string _host = "192.168.5.61";
-        private readonly int _port = 22;
-        private readonly string _username = "root";
-        private readonly string _password = "Kaizen%$#@!";
-
-      
-
-        public IVRController(IConfiguration configuration)
+        [HttpPost("CreateCampaignMaster")]
+        public IActionResult InsertCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
         {
-            //string dbcon=""
-            lg = new Log();
-            lg.lodwrite("databaseconnection");
-            _dbConnection = configuration.GetConnectionString("dbcon");
+            try
+            {
+                List<string> ErrorMessage = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
+                {
+                    ErrorMessage.Add("Campaign_id is mandatory");
+                }
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
+                {
+                    ErrorMessage.Add("Campaign_Name is mandatory");
+                }
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
+                {
+                    ErrorMessage.Add("Status is mandatory");
+                }
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
+                {
+                    ErrorMessage.Add("Time_Zone is mandatory");
+                }
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
+                {
+                    ErrorMessage.Add("Start_date is mandatory");
+                }
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
+                {
+                    ErrorMessage.Add("end_date is mandatory");
+                }
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
+                {
+                    ErrorMessage.Add("Start_time is mandatory");
+                }
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
+                {
+                    ErrorMessage.Add("End_time is mandatory");
+                }
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
+                {
+                    ErrorMessage.Add("Dialing_Mode is mandatory");
+                }
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
+                {
+                    ErrorMessage.Add("Retry_intervals is mandatory");
+                }
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
+                {
+                    ErrorMessage.Add("Retry_attempts is mandatory");
+                }
+                if (ErrorMessage.Count > 0)
+                {
+                    return Ok(new { ErrorMessage });
+                }
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+
+
+
+                    string CMquery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER_V2 where VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
+                    using (SqlCommand CMcmd = new SqlCommand(CMquery, con))
+                    {
+                        CMcmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
+                        //cmd.ExecuteNonQuery();
+                        int count = (int)CMcmd.ExecuteScalar();
+                        if (count > 0)
+                        {
+                            return Content($"Campaign ID already exists. Please use a unique Campaign ID ");
+                        }
+                        else
+                        {
+                            string checkQuery = "SELECT COUNT(*) FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE'";
+                            using (SqlCommand cmdCheck = new SqlCommand(checkQuery, con))
+                            {
+                                int DNIScount = (int)cmdCheck.ExecuteScalar();
+
+                                if (DNIScount > 0)
+                                {
+                                    string selectquery = "SELECT TOP(1) VAR_DNIS FROM TBL_DNIS WHERE VAR_MODE='NOTINUSE' ORDER BY VAR_DNIS";
+                                    using (SqlCommand checkDnisCmd = new SqlCommand(selectquery, con))
+                                    using (SqlDataReader reader = checkDnisCmd.ExecuteReader())
+                                    {
+                                        if (reader.Read())
+                                        {
+                                            string selectedDnis = reader["VAR_DNIS"].ToString();
+                                            reader.Close();
+
+                                            string DNISquery = @"UPDATE TBL_DNIS SET VAR_CAMPAIGN_NAME=@VAR_CAMPAIGN_NAME, 
+                                                                 VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID,VAR_MODE='INUSE' WHERE VAR_DNIS=@VAR_DNIS";
+
+                                            using (SqlCommand cmd = new SqlCommand(DNISquery, con))
+                                            {
+                                                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
+                                                cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", dNIS_TABLE.campaign_name);
+                                                cmd.Parameters.AddWithValue("@VAR_DNIS", selectedDnis);
+                                                cmd.ExecuteNonQuery();
+
+                                                string insertquery = @"INSERT INTO TBL_CAMPAIGN_MASTER_V2 
+                                          (VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_STATUS, VAR_CAMPAIGN_DESCRIPTION,
+                                          VAR_CAMPAIGN_TYPE, VAR_TIME_ZONE, VAR_CAMPAIN_CREATED_DATE, VAR_CAMPAIN_START_DATE, VAR_CAMPAIN_END_DATE, 
+                                          VAR_CAMPAIGN_START_TIME, VAR_CAMPAIGN_END_TIME, VAR_DIALING_MODE,
+                                          VAR_MAX_CONCURRENT_CALLS, VAR_CALL_DURATION_LIMIT, VAR_RETRY_ATTEMPTS, VAR_RETRY_INTERVALS, 
+                                          VAR_TEAMS, VAR_MAX_LEADS, VAR_SKILL_TAGS, VAR_IS_RECORDING, VAR_SOURCE_FILR_PATH, VAR_DESTINATION_FILE_PATH)
+                                          VALUES
+                                          (@VAR_CAMPAIGN_ID, @VAR_CAMPAIGN_NAME, @VAR_STATUS, @VAR_CAMPAIGN_DESCRIPTION,
+                                          @VAR_CAMPAIGN_TYPE, @VAR_TIME_ZONE, @VAR_CAMPAIN_CREATED_DATE, @VAR_CAMPAIN_START_DATE, @VAR_CAMPAIN_END_DATE,
+                                          @VAR_CAMPAIGN_START_TIME, @VAR_CAMPAIGN_END_TIME, @VAR_DIALING_MODE,
+                                          @VAR_MAX_CONCURRENT_CALLS, @VAR_CALL_DURATION_LIMIT, @VAR_RETRY_ATTEMPTS, @VAR_RETRY_INTERVALS, 
+                                          @VAR_TEAMS, @VAR_MAX_LEADS, @VAR_SKILL_TAGS, @VAR_IS_RECORDING, NULL, NULL)";
+
+
+                                                using (SqlCommand Icmd = new SqlCommand(insertquery, con))
+                                                {
+                                                    AddCampaignParameters(Icmd, dNIS_TABLE);
+                                                    int rows = Icmd.ExecuteNonQuery();
+
+                                                    if (rows > 0)
+                                                    {
+                                                        return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
+                                                    }
+                                                    else
+                                                    {
+                                                        return Content("Insert failed");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            return Content($"{dNIS_TABLE.campaign_id} Campaign ID is already created");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    return Content("No Data Found in NOTINUSE");
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            }
+
+            catch (Exception ex)
+            {
+                return Content("Unexpected Error: " + ex.Message);
+            }
+        }
+        #region
+        //[HttpPut("UpdateCampaignMaster")]
+        //public IActionResult UpdateCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
+        //{
+        //    try
+        //    {
+        //        List<string> ErrorMessage = new List<string>();
+
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
+        //        {
+        //            ErrorMessage.Add("Campaign_id is mandatory");
+        //        }
+
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
+        //        {
+        //            ErrorMessage.Add("Campaign_Name is mandatory");
+        //        }
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
+        //        {
+        //            ErrorMessage.Add("Status is mandatory");
+        //        }
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
+        //        {
+        //            ErrorMessage.Add("Time_Zone is mandatory");
+        //        }
+
+
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
+        //        {
+        //            ErrorMessage.Add("Start_date is mandatory");
+        //        }
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
+        //        {
+        //            ErrorMessage.Add("end_date is mandatory");
+        //        }
+
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
+        //        {
+        //            ErrorMessage.Add("Start_time is mandatory");
+        //        }
+
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
+        //        {
+        //            ErrorMessage.Add("End_time is mandatory");
+        //        }
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
+        //        {
+        //            ErrorMessage.Add("Dialing_Mode is mandatory");
+        //        }
+
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
+        //        {
+        //            ErrorMessage.Add("Retry_intervals is mandatory");
+        //        }
+        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
+        //        {
+        //            ErrorMessage.Add("Retry_attempts is mandatory");
+        //        }
+        //        if (ErrorMessage.Count > 0)
+        //        {
+        //            return Ok(new { ErrorMessage });
+        //        }
+        //        string Campaignquery = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_CAMPAIGN_NAME = @VAR_CAMPAIGN_NAME,
+        //            VAR_STATUS = @VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION = @VAR_CAMPAIGN_DESCRIPTION,
+        //            VAR_CAMPAIGN_TYPE = @VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE = @VAR_TIME_ZONE,VAR_CAMPAIN_CREATED_DATE=@VAR_CAMPAIN_CREATED_DATE,
+        //            VAR_CAMPAIN_START_DATE=@VAR_CAMPAIN_START_DATE,VAR_CAMPAIN_END_DATE=@VAR_CAMPAIN_END_DATE,
+        //            VAR_CAMPAIGN_START_TIME = @VAR_CAMPAIGN_START_TIME,VAR_CAMPAIGN_END_TIME = @VAR_CAMPAIGN_END_TIME,
+        //            VAR_DIALING_MODE = @VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS = @VAR_MAX_CONCURRENT_CALLS,
+        //            VAR_CALL_DURATION_LIMIT = @VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS = @VAR_RETRY_ATTEMPTS,
+        //            VAR_RETRY_INTERVALS = @VAR_RETRY_INTERVALS,VAR_TEAMS = @VAR_TEAMS,
+        //            VAR_MAX_LEADS = @VAR_MAX_LEADS,VAR_SKILL_TAGS = @VAR_SKILL_TAGS,
+        //            VAR_IS_RECORDING = @VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+        //        using (SqlConnection UCon = new SqlConnection(_dbConnection))
+        //        {
+        //            UCon.Open();
+
+        //            using (SqlCommand cmd = new SqlCommand(Campaignquery, UCon))
+        //            {
+        //                // Add parameters
+
+        //                AddCampaignParameters(cmd, dNIS_TABLE);
+        //                int Count = cmd.ExecuteNonQuery();
+
+        //                if (Count > 0)
+        //                {
+        //                    return Ok($" Campaign updated successfully  {dNIS_TABLE.campaign_id}");
+        //                }
+        //                else
+        //                {
+        //                    return NotFound(new { Message = "No record found with the provided Campaign ID" });
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { Message = "An error occurred while updating the campaign.", Error = ex.Message });
+        //    }
+        //}
+        #endregion
+
+
+
+
+        [HttpPost("UpdateCampaignMaster")]
+        public IActionResult UpdateCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
+        {
+            try
+            {
+                if (dNIS_TABLE == null)
+                    return BadRequest("Request body is missing");
+
+                List<string> errorMessage = new();
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
+                    errorMessage.Add("Campaign_id is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
+                    errorMessage.Add("Campaign_Name is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
+                    errorMessage.Add("Status is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
+                    errorMessage.Add("Time_Zone is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
+                    errorMessage.Add("Start_date is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
+                    errorMessage.Add("End_date is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
+                    errorMessage.Add("Start_time is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
+                    errorMessage.Add("End_time is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
+                    errorMessage.Add("Dialing_Mode is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
+                    errorMessage.Add("Retry_intervals is mandatory");
+
+                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
+                    errorMessage.Add("Retry_attempts is mandatory");
+
+                if (errorMessage.Count > 0)
+                    return BadRequest(new { Errors = errorMessage });
+
+                string query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2 SET
+                    VAR_CAMPAIGN_NAME = @VAR_CAMPAIGN_NAME,
+                    VAR_STATUS = @VAR_STATUS,
+                    VAR_CAMPAIGN_DESCRIPTION = @VAR_CAMPAIGN_DESCRIPTION,
+                    VAR_CAMPAIGN_TYPE = @VAR_CAMPAIGN_TYPE,
+                    VAR_TIME_ZONE = @VAR_TIME_ZONE,
+                    VAR_CAMPAIN_CREATED_DATE = @VAR_CAMPAIN_CREATED_DATE,
+                    VAR_CAMPAIN_START_DATE = @VAR_CAMPAIN_START_DATE,
+                    VAR_CAMPAIN_END_DATE = @VAR_CAMPAIN_END_DATE,
+                    VAR_CAMPAIGN_START_TIME = @VAR_CAMPAIGN_START_TIME,
+                    VAR_CAMPAIGN_END_TIME = @VAR_CAMPAIGN_END_TIME,
+                    VAR_DIALING_MODE = @VAR_DIALING_MODE,
+                    VAR_MAX_CONCURRENT_CALLS = @VAR_MAX_CONCURRENT_CALLS,
+                    VAR_CALL_DURATION_LIMIT = @VAR_CALL_DURATION_LIMIT,
+                    VAR_RETRY_ATTEMPTS = @VAR_RETRY_ATTEMPTS,
+                    VAR_RETRY_INTERVALS = @VAR_RETRY_INTERVALS,
+                    VAR_TEAMS = @VAR_TEAMS,
+                    VAR_MAX_LEADS = @VAR_MAX_LEADS,
+                    VAR_SKILL_TAGS = @VAR_SKILL_TAGS,
+                    VAR_IS_RECORDING = @VAR_IS_RECORDING
+                WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+                using SqlConnection con = new(_dbConnection);
+                using SqlCommand cmd = new(query, con);
+
+                AddCampaignParameters(cmd, dNIS_TABLE);
+
+                con.Open();
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows == 0)
+                    return NotFound("No campaign found with given Campaign ID");
+
+                return Ok($"Campaign updated successfully: {dNIS_TABLE.campaign_id}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    Message = "Error while updating campaign",
+                    Error = ex.Message
+                });
+            }
         }
 
 
+        private void AddCampaignParameters(SqlCommand cmd, DNIS_TABLE dNIS_TABLE)
+        {
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_NAME", dNIS_TABLE.campaign_name);
+            cmd.Parameters.AddWithValue("@VAR_STATUS", dNIS_TABLE.Status);
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_DESCRIPTION", dNIS_TABLE.Campaign_Description ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_TYPE", dNIS_TABLE.Campaign_Type ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_TIME_ZONE", dNIS_TABLE.Time_Zone);
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIN_CREATED_DATE", DateTime.Now);
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIN_START_DATE", dNIS_TABLE.Start_Date ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIN_END_DATE", dNIS_TABLE.End_Date ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_START_TIME", dNIS_TABLE.Start_Time ?? (object)DBNull.Value); // TimeSpan or DateTime
+            cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_END_TIME", dNIS_TABLE.End_Time ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_DIALING_MODE", dNIS_TABLE.Dialing_Mode ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_MAX_CONCURRENT_CALLS", dNIS_TABLE.Max_Concurrent_Calls ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_CALL_DURATION_LIMIT", dNIS_TABLE.Call_duration_Limit ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_RETRY_ATTEMPTS", dNIS_TABLE.Retry_attempts ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_RETRY_INTERVALS", dNIS_TABLE.Retry_intervals ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_TEAMS", dNIS_TABLE.Teams ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_MAX_LEADS", dNIS_TABLE.Max_Leads ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", dNIS_TABLE.Skill_Tags ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", dNIS_TABLE.Is_Recording ?? (object)DBNull.Value);
+        }
+
+        #region
+        //[HttpPost("outdial")]
+        //public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        //{
+        //    if (file == null || file.Length == 0)
+        //        return BadRequest("No file uploaded!");
+
+        //    Directory.CreateDirectory(UploadFolder);
+        //    string filePath = Path.Combine(UploadFolder, file.FileName);
+
+        //    using (var stream = new FileStream(filePath, FileMode.Create))
+        //        await file.CopyToAsync(stream);
+
+        //    var rows = FileDataReader.ReadTable(filePath).ToList();
+        //    if (rows.Count <= 1)
+        //        return BadRequest("No data rows found in Excel.");
+
+        //    var records = new ConcurrentBag<TBL_CAMPAIGN_DETAILS>();
+
+        //    Parallel.ForEach(
+        //        rows.Skip(1),
+        //        new ParallelOptions { MaxDegreeOfParallelism = 10 },
+        //        arr =>
+        //        {
+        //            if (arr.Length < 2) return;
+
+        //            string callerId = arr[0]?.ToString()?.Trim();
+        //            string extension = arr[1]?.ToString()?.Trim();
+
+        //            if (string.IsNullOrEmpty(callerId) || string.IsNullOrEmpty(extension))
+        //                return;
+
+        //            string channel = $"{callerId}";
+
+        //            // ✅ FIX: UNIQUE FILE NAME (NO COLLISION)
+        //            string callFileName = $"{callerId}_{Guid.NewGuid():N}.call";
+        //            string localCallFile = Path.Combine(UploadFolder, callFileName);
+
+        //            System.IO.File.WriteAllLines(localCallFile, new[]
+        //             {
+        //                 $"Setvar:caller_id=out{callerId}",
+        //                 $"Channel:{channel}",
+        //                 "WaitTime:30",
+        //                 "MaxRetries:0",
+        //                 "RetryTime:0",
+        //                 "Context:from-interval",
+        //                 $"Extension:{extension}",
+        //                 "Priority:1",
+        //                 "Archive:yes"
+        //            });
+
+        //            records.Add(new TBL_CAMPAIGN_DETAILS
+        //            {
+        //                VAR_CALLER_ID = callerId,
+        //                VAR_CHANNEL_ID = channel,
+        //                VAR_WAIT_TIME = 30,
+        //                VAR_MAXRETRIES = 0,
+        //                VAR_RETRYTIME = 0,
+        //                VAR_EXTENSION = extension,
+        //                VAR_STATUS = "PENDING"
+
+        //            });
+        //        });
+
+        //    BulkInsert(records.ToList());
+
+        //    return Ok(new
+        //    {
+        //        Message = "Outdial Call Successfully Created",
+        //        TotalInserted = records.Count
+        //    });
+        //}
+
+        //private void BulkInsert(List<TBL_CAMPAIGN_DETAILS> data)
+        //{
+        //    if (data == null || data.Count == 0)
+        //        return;
+
+        //    using var con = new SqlConnection(_dbConnection);
+        //    con.Open();
+
+        //    using var bulk = new SqlBulkCopy(con)
+        //    {
+        //        DestinationTableName = "TBL_CAMPAIGNDETAILS"
+        //    };
+
+        //    bulk.ColumnMappings.Add("VAR_CALLER_ID", "VAR_CALLER_ID");
+        //    bulk.ColumnMappings.Add("VAR_CHANNEL_ID", "VAR_CHANNEL_ID");
+        //    bulk.ColumnMappings.Add("VAR_WAIT_TIME", "VAR_WAIT_TIME");
+        //    bulk.ColumnMappings.Add("VAR_MAXRETRIES", "VAR_MAXRETRIES");
+        //    bulk.ColumnMappings.Add("VAR_RETRYTIME", "VAR_RETRYTIME");
+        //    bulk.ColumnMappings.Add("VAR_EXTENSION", "VAR_EXTENSION");
+        //    bulk.ColumnMappings.Add("VAR_STATUS", "VAR_STATUS");
+
+        //    var table = new DataTable();
+        //    table.Columns.Add("VAR_CALLER_ID");
+        //    table.Columns.Add("VAR_CHANNEL_ID");
+        //    table.Columns.Add("VAR_WAIT_TIME", typeof(int));
+        //    table.Columns.Add("VAR_MAXRETRIES", typeof(int));
+        //    table.Columns.Add("VAR_RETRYTIME", typeof(int));
+        //    table.Columns.Add("VAR_EXTENSION");
+        //    table.Columns.Add("VAR_STATUS");
+
+        //    foreach (var r in data)
+        //    {
+        //        table.Rows.Add(
+        //            r.VAR_CALLER_ID,
+        //            r.VAR_CHANNEL_ID,
+        //            r.VAR_WAIT_TIME,
+        //            r.VAR_MAXRETRIES,
+        //            r.VAR_RETRYTIME,
+        //            r.VAR_EXTENSION,
+        //            r.VAR_STATUS
+        //        );
+        //    }
+
+        //    bulk.WriteToServer(table);
+        //}
+        #endregion
+
         [HttpPost("outdial")]
-        public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string campaignId)
+        public async Task<IActionResult> UploadFile(
+    [FromForm] IFormFile file,
+    [FromForm] string campaign_id)
         {
             if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded");
-            if (string.IsNullOrWhiteSpace(campaignId))
-                return BadRequest("Campaign Id is missing");
+                return BadRequest("No file uploaded!");
 
-            lg.lodwrite("=== UploadFile Entry ===");
+            TimeSpan campaignStartTime;
+
+            using (SqlConnection con = new SqlConnection(_dbConnection))
+            {
+                await con.OpenAsync();
+
+                using SqlCommand cmd = new SqlCommand(
+                    @"SELECT VAR_CAMPAIGN_START_TIME
+              FROM TBL_CAMPAIGN_MASTER_V2
+              WHERE VAR_CAMPAIGN_ID = @CampaignId", con);
+
+                cmd.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaign_id;
+
+                object result = await cmd.ExecuteScalarAsync();
+
+                if (result == null || result == DBNull.Value)
+                    return BadRequest("Invalid Campaign ID");
+
+                campaignStartTime = (TimeSpan)result;
+            }
 
             Directory.CreateDirectory(UploadFolder);
             string filePath = Path.Combine(UploadFolder, file.FileName);
-            using (var fs = new FileStream(filePath, FileMode.Create))
-                file.CopyTo(fs);
 
-            string waitTime = "0";
-            string maxRetries = "0";
-            string campNameOriginal = string.Empty; // for .call content
-            string campNameUpd = string.Empty;      // for folders
-            string campId = string.Empty;
-            string campaignStatus = string.Empty;
+            using (var stream = new FileStream(filePath, FileMode.Create))
+                await file.CopyToAsync(stream);
+
+            var rows = FileDataReader.ReadTable(filePath).ToList();
+            if (rows.Count <= 1)
+                return BadRequest("No data rows found");
+
+            ConcurrentBag<TBL_CAMPAIGN_DETAILS> records = new();
+
+            Parallel.ForEach(rows.Skip(1), row =>
+            {
+                if (row.Length < 2) return;
+
+                string callerId = row[0]?.ToString()?.Trim();
+                string extension = row[1]?.ToString()?.Trim();
+
+                if (string.IsNullOrEmpty(callerId) || string.IsNullOrEmpty(extension))
+                    return;
+
+                records.Add(new TBL_CAMPAIGN_DETAILS
+                {
+                    VAR_CAMPAIGN_ID = campaign_id,
+                    VAR_CAMPAIGN_START_TIME = campaignStartTime,
+                    VAR_CALLER_ID = callerId,
+                    VAR_CHANNEL_ID = callerId,
+                    VAR_WAIT_TIME = 30,
+                    VAR_MAXRETRIES = 0,
+                    VAR_RETRYTIME = 0,
+                    VAR_EXTENSION = extension,
+                    VAR_STATUS = "PENDING"
+                });
+            });
+
+            BulkInsert(records.ToList());
+
+            return Ok(new
+            {
+                Message = "Outdial Call Successfully Created",
+                CampaignId = campaign_id,
+                TotalInserted = records.Count
+            });
+        }
+
+
+        private void BulkInsert(List<TBL_CAMPAIGN_DETAILS> data)
+        {
+            using var con = new SqlConnection(_dbConnection);
+            con.Open();
+
+            using var bulk = new SqlBulkCopy(con)
+            {
+                DestinationTableName = "TBL_CAMPAIGNDETAILS"
+            };
+
+            bulk.ColumnMappings.Add("VAR_CAMPAIGN_ID", "VAR_CAMPAIGN_ID");
+            bulk.ColumnMappings.Add("VAR_CAMPAIGN_START_TIME", "VAR_CAMPAIGN_START_TIME");
+            bulk.ColumnMappings.Add("VAR_CALLER_ID", "VAR_CALLER_ID");
+            bulk.ColumnMappings.Add("VAR_CHANNEL_ID", "VAR_CHANNEL_ID");
+            bulk.ColumnMappings.Add("VAR_WAIT_TIME", "VAR_WAIT_TIME");
+            bulk.ColumnMappings.Add("VAR_MAXRETRIES", "VAR_MAXRETRIES");
+            bulk.ColumnMappings.Add("VAR_RETRYTIME", "VAR_RETRYTIME");
+            bulk.ColumnMappings.Add("VAR_EXTENSION", "VAR_EXTENSION");
+            bulk.ColumnMappings.Add("VAR_STATUS", "VAR_STATUS");
+
+            var table = new DataTable();
+
+            table.Columns.Add("VAR_CAMPAIGN_ID", typeof(int));
+            table.Columns.Add("VAR_CAMPAIGN_START_TIME", typeof(TimeSpan));
+            table.Columns.Add("VAR_CALLER_ID", typeof(string));
+            table.Columns.Add("VAR_CHANNEL_ID", typeof(string));
+            table.Columns.Add("VAR_WAIT_TIME", typeof(int));
+            table.Columns.Add("VAR_MAXRETRIES", typeof(int));
+            table.Columns.Add("VAR_RETRYTIME", typeof(int));
+            table.Columns.Add("VAR_EXTENSION", typeof(string));
+            table.Columns.Add("VAR_STATUS", typeof(string));
+
+            foreach (var r in data)
+            {
+                table.Rows.Add(
+                    r.VAR_CAMPAIGN_ID,
+                    r.VAR_CAMPAIGN_START_TIME,
+                    r.VAR_CALLER_ID,
+                    r.VAR_CHANNEL_ID,
+                    r.VAR_WAIT_TIME,
+                    r.VAR_MAXRETRIES,
+                    r.VAR_RETRYTIME,
+                    r.VAR_EXTENSION,
+                    r.VAR_STATUS
+                );
+            }
+
+            bulk.WriteToServer(table);
+        }
+
+
+
+
+
+
+        [HttpGet("callactivity")]
+        public IActionResult CallActivity()
+        {
+            var result = new List<TBL_QUEUE_ACTIVITY>();
 
             try
             {
                 using (SqlConnection con = new SqlConnection(_dbConnection))
                 {
                     con.Open();
-                    string q = @"SELECT TOP 1 VAR_CAMPAIGN_ID, VAR_CAMPAIGN_NAME, VAR_RETRY_INTERVALS, VAR_RETRY_ATTEMPTS, VAR_STATUS FROM TBL_CAMPAIGN_MASTER_V2 WHERE VAR_CAMPAIGN_ID = @cid";
-                    using (SqlCommand cmd = new SqlCommand(q, con))
-                    {
-                        cmd.Parameters.AddWithValue("@cid", campaignId);
-                        using (SqlDataReader r = cmd.ExecuteReader())
-                        {
-                            if (r.Read())
-                            {
-                                campId = r["VAR_CAMPAIGN_ID"]?.ToString();
-                                campNameOriginal = r["VAR_CAMPAIGN_NAME"]?.ToString();
-                                waitTime = r["VAR_RETRY_INTERVALS"]?.ToString() ?? "0";
-                                maxRetries = r["VAR_RETRY_ATTEMPTS"]?.ToString() ?? "0";
-                                campaignStatus = r["VAR_STATUS"]?.ToString() ?? "";
+                    string query = @"SELECT VAR_CALLED_DATE, VAR_CALLER_ID, VAR_UNIQUE_ID, VAR_QUEUE_NAME,
+                             VAR_AGENT_ID, VAR_STATUS, VAR_WAIT_START_TIME, VAR_WAIT_END_TIME, 
+                             VAR_WAIT_DURATION 
+                             FROM TBL_QUEUE_ACTIVITY order by VAR_CALLED_DATE desc";
 
-                                campNameUpd = campNameOriginal.Replace(" ", "-") + "_" + campId;
-                            }
-                            else
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            result.Add(new TBL_QUEUE_ACTIVITY
                             {
-                                return NotFound($"Campaign {campaignId} not found");
+                                calleddate = dr["VAR_CALLED_DATE"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_CALLED_DATE"]),
+                                callerid = dr["VAR_CALLER_ID"]?.ToString(),
+                                uniqueid = dr["VAR_UNIQUE_ID"]?.ToString(),
+                                queuename = dr["VAR_QUEUE_NAME"]?.ToString(),
+
+                                agentid = dr["VAR_AGENT_ID"] == DBNull.Value ? "" : dr["VAR_AGENT_ID"].ToString()
+        .Replace("pjsip/", "", StringComparison.OrdinalIgnoreCase).Replace("pjsip", "", StringComparison.OrdinalIgnoreCase)
+        .Trim().Equals("NOT CONNECTED", StringComparison.OrdinalIgnoreCase) ? "" : dr["VAR_AGENT_ID"].ToString()
+            .Replace("pjsip/", "", StringComparison.OrdinalIgnoreCase).Replace("pjsip", "", StringComparison.OrdinalIgnoreCase).Trim(),
+
+                                status = dr["VAR_STATUS"] == DBNull.Value ? null : dr["VAR_STATUS"].ToString().Trim().ToLower() == "continue"
+        ? "connected" : dr["VAR_STATUS"].ToString(),
+
+                                startdate = dr["VAR_WAIT_START_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_WAIT_START_TIME"]),
+                                enddate = dr["VAR_WAIT_END_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_WAIT_END_TIME"]),
+                                waitduration = dr["VAR_WAIT_DURATION"]?.ToString()
+                            });
+                        }
+                    }
+                }
+
+                if (result.Count == 0)
+                    return Ok("Nodata");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("callsinteracting")]
+        public IActionResult CallInteracting()
+        {
+            var result = new List<TBL_CALL_TRANSFER_2>();
+            try
+            {
+                using (SqlConnection Con = new SqlConnection(_dbConnection))
+                {
+                    Con.Open();
+                    string Selectquery = @"
+                    SELECT VAR_CALLED_DATE, VAR_CALLER_ID, VAR_UNIQUE_ID,
+                           VAR_PATCH_START_TIME, VAR_PATCH_END_TIME,
+                           VAR_PATCH_DURATION, VAR_TRANSFERSTATUS
+                    FROM TBL_CALL_TRANSFER 
+                    WHERE VAR_TRANSFERSTATUS = 'ANSWER'
+                    ORDER BY VAR_CALLED_DATE DESC";
+
+
+
+                    using (SqlCommand cmd = new SqlCommand(Selectquery, Con))
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            DateTime? endtime = dr["VAR_PATCH_END_TIME"] == DBNull.Value
+                                ? (DateTime?)null
+                                : Convert.ToDateTime(dr["VAR_PATCH_END_TIME"]);
+
+                            // 👉 If End Time is null → Status = PROGRESS
+                            string status = endtime == null
+                                ? "LIVECALL"
+                                : dr["VAR_TRANSFERSTATUS"]?.ToString();
+
+                            result.Add(new TBL_CALL_TRANSFER_2
+                            {
+                                calleddate = dr["VAR_CALLED_DATE"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_CALLED_DATE"]),
+                                callerid = dr["VAR_CALLER_ID"]?.ToString(),
+                                uniqueid = dr["VAR_UNIQUE_ID"]?.ToString(),
+                                status = status,
+                                startdate = dr["VAR_PATCH_START_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_PATCH_START_TIME"]),
+                                enddate = endtime,
+                                duration = dr["VAR_PATCH_DURATION"]?.ToString()
+                            });
+                        }
+                    }
+
+                    if (!result.Any())
+                        return Ok("Nodata");
+
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("hold")]
+        public IActionResult Hold()
+        {
+            var login = new List<TBL_QUEUE_ACTIVITY>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+                    string selectquery = "select * from TBL_QUEUE_ACTIVITY where VAR_CONVERSATION_HOLD > 0 order by VAR_CALLED_DATE desc";
+                    using (SqlCommand cmd = new SqlCommand(selectquery, con))
+                    {
+                        //cmd.Parameters.AddWithValue("@VAR_STATUS", status);
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                login.Add(new TBL_QUEUE_ACTIVITY
+                                {
+
+                                    calleddate = dr["VAR_CALLED_DATE"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_CALLED_DATE"]),
+                                    callerid = dr["VAR_CALLER_ID"]?.ToString(),
+                                    uniqueid = dr["VAR_UNIQUE_ID"]?.ToString(),
+                                    queuename = dr["VAR_QUEUE_NAME"]?.ToString(),
+
+                                    agentid = dr["VAR_AGENT_ID"] == DBNull.Value ? "" : dr["VAR_AGENT_ID"].ToString()
+                                              .Replace("pjsip/", "", StringComparison.OrdinalIgnoreCase).Replace("pjsip", "", StringComparison.OrdinalIgnoreCase)
+                                              .Trim().Equals("NOT CONNECTED", StringComparison.OrdinalIgnoreCase) ? "" : dr["VAR_AGENT_ID"].ToString()
+                                                  .Replace("pjsip/", "", StringComparison.OrdinalIgnoreCase).Replace("pjsip", "", StringComparison.OrdinalIgnoreCase).Trim(),
+
+                                    status = dr["VAR_STATUS"] == DBNull.Value ? null : dr["VAR_STATUS"]
+                                             .ToString().Trim().ToLower() == "continue"
+                                             ? "connected" : dr["VAR_STATUS"].ToString(),
+
+                                    startdate = dr["VAR_WAIT_START_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_WAIT_START_TIME"]),
+                                    enddate = dr["VAR_WAIT_END_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_WAIT_END_TIME"]),
+                                    waitduration = dr["VAR_WAIT_DURATION"]?.ToString(),
+                                    conversationhold = dr["VAR_CONVERSATION_HOLD"]?.ToString(),
+                                });
                             }
+                        }
+                    }
+
+                    if (login.Count == 0)
+                    {
+                        return Ok("Nodata");
+                    }
+                    return Ok(login);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromQuery] string StartDate, [FromQuery] string EndDate)
+        {
+            var result = new List<TBL_AGENT_DETAILS>();
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(StartDate) && !string.IsNullOrWhiteSpace(EndDate))
+                {
+                    string[] dateFormats = { "yyyy-MM-dd", "dd-MM-yyyy" };
+
+                    DateTime start = DateTime.ParseExact(StartDate, dateFormats,
+                                                        System.Globalization.CultureInfo.InvariantCulture,
+                                                        System.Globalization.DateTimeStyles.None).Date;
+
+                    DateTime end = DateTime.ParseExact(EndDate, dateFormats,
+                                                      System.Globalization.CultureInfo.InvariantCulture,
+                                                      System.Globalization.DateTimeStyles.None)
+                                                      .Date.AddDays(1).AddTicks(-1);
+
+                    using (SqlConnection con = new SqlConnection(_dbConnection))
+                    {
+                        con.Open();
+
+                        string query = @"SELECT * FROM TBL_AGENT_DETAILS 
+                        WHERE VAR_STATUS='AVAILABLE'
+                        AND VAR_LOGIN_TIME >= @StartDate
+                        AND (VAR_LOGOUT_TIME <= @EndDate OR VAR_LOGOUT_TIME IS NULL)
+                        ORDER BY VAR_CALLED_DATE DESC";
+
+                        using (SqlCommand cmd = new SqlCommand(query, con))
+                        {
+                            cmd.Parameters.Add("@StartDate", SqlDbType.DateTime).Value = start;
+                            cmd.Parameters.Add("@EndDate", SqlDbType.DateTime).Value = end;
+
+                            using (SqlDataReader dr = cmd.ExecuteReader())
+                            {
+                                if (!dr.HasRows)
+                                    return Ok("NODATA");
+
+                                while (dr.Read())
+                                {
+                                    result.Add(new TBL_AGENT_DETAILS
+                                    {
+                                        calleddate = dr["VAR_CALLED_DATE"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_CALLED_DATE"]),
+                                        agentid = dr["VAR_AGENT_ID"] == DBNull.Value ? null :
+                                                  dr["VAR_AGENT_ID"].ToString()
+                                                  .Replace("pjsip/", "", StringComparison.OrdinalIgnoreCase)
+                                                  .Replace("pjsip", "", StringComparison.OrdinalIgnoreCase)
+                                                  .Trim(),
+                                        queuename = dr["VAR_QUEUE_NAME"]?.ToString(),
+                                        status = dr["VAR_STATUS"]?.ToString(),
+                                        Logindate = dr["VAR_LOGIN_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_LOGIN_TIME"]),
+                                        Logoutdate = dr["VAR_LOGOUT_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_LOGOUT_TIME"]),
+                                        duration = dr["VAR_DURATION"]?.ToString()
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout([FromQuery] string StartDate, [FromQuery] string EndDate)
+        {
+            var result = new List<TBL_AGENT_DETAILS>();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(StartDate) && !string.IsNullOrWhiteSpace(EndDate))
+                {
+                    string[] dateFormats = { "yyyy-MM-dd", "dd-MM-yyyy" };
+
+                    DateTime start = DateTime.ParseExact(StartDate, dateFormats,
+                                                        System.Globalization.CultureInfo.InvariantCulture,
+                                                        System.Globalization.DateTimeStyles.None).Date;
+
+                    DateTime end = DateTime.ParseExact(EndDate, dateFormats,
+                                                      System.Globalization.CultureInfo.InvariantCulture,
+                                                      System.Globalization.DateTimeStyles.None)
+                                                      .Date.AddDays(1).AddTicks(-1);
+
+                    using (SqlConnection con = new SqlConnection(_dbConnection))
+                    {
+                        con.Open();
+
+                        string query = @"SELECT * FROM TBL_AGENT_DETAILS 
+                        WHERE VAR_STATUS='UNAVAILABLE'
+                        AND VAR_LOGIN_TIME >= @StartDate
+                        AND (VAR_LOGOUT_TIME <= @EndDate OR VAR_LOGOUT_TIME IS NULL)
+                        ORDER BY VAR_CALLED_DATE DESC";
+
+                        using (SqlCommand cmd = new SqlCommand(query, con))
+                        {
+                            cmd.Parameters.Add("@StartDate", SqlDbType.DateTime).Value = start;
+                            cmd.Parameters.Add("@EndDate", SqlDbType.DateTime).Value = end;
+
+                            using (SqlDataReader dr = cmd.ExecuteReader())
+                            {
+                                if (!dr.HasRows)
+                                    return Ok("NODATA");
+
+                                while (dr.Read())
+                                {
+                                    result.Add(new TBL_AGENT_DETAILS
+                                    {
+                                        calleddate = dr["VAR_CALLED_DATE"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_CALLED_DATE"]),
+                                        agentid = dr["VAR_AGENT_ID"] == DBNull.Value ? null :
+                                                  dr["VAR_AGENT_ID"].ToString()
+                                                  .Replace("pjsip/", "", StringComparison.OrdinalIgnoreCase)
+                                                  .Replace("pjsip", "", StringComparison.OrdinalIgnoreCase)
+                                                  .Trim(),
+                                        queuename = dr["VAR_QUEUE_NAME"]?.ToString(),
+                                        status = dr["VAR_STATUS"]?.ToString(),
+                                        Logindate = dr["VAR_LOGIN_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_LOGIN_TIME"]),
+                                        Logoutdate = dr["VAR_LOGOUT_TIME"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["VAR_LOGOUT_TIME"]),
+                                        duration = dr["VAR_DURATION"]?.ToString()
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok(result);
+
+        }
+
+
+        [HttpGet("PhoneNumber")]
+        public IActionResult Phone_Number([FromQuery] string phoneNumber)
+        {
+            var result = new List<PAS_SYSTEM>();
+            try
+            {
+                if (phoneNumber != "")
+                {
+                    string insertquery = "select* from TBL_PAS_SYSTEM where phoneNumber=@PhoneNumber";
+                    using (SqlConnection con = new SqlConnection(_dbConnection))
+                    {
+                        con.Open();
+                        using (SqlCommand cmd = new SqlCommand(insertquery, con))
+                        {
+                            cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                            using (SqlDataReader dr = cmd.ExecuteReader())
+                            {
+                                if (dr.HasRows)
+                                {
+                                    for (int i = 0; i < dr.FieldCount; i++)
+                                    {
+                                        while (dr.Read())
+                                        {
+                                            PAS_SYSTEM pass = new PAS_SYSTEM
+                                            {
+                                                ssn = Convert.ToInt32(dr["ssn"]),
+                                                memberNumber = dr["memberNumber"]?.ToString(),
+                                                nin = dr["nin"]?.ToString(),
+                                                tin = dr["tin"]?.ToString(),
+                                                phoneNumber = dr["phoneNumber"]?.ToString(),
+                                                email = dr["email"]?.ToString(),
+                                                firstname = dr["firstname"]?.ToString(),
+                                                surname = dr["surname"]?.ToString(),
+                                                otherNames = dr["otherNames"]?.ToString(),
+                                                gender = dr["gender"]?.ToString(),
+                                                membershipStatus = dr["membershipStatus"]?.ToString(),
+                                                dateOfBirth = dr["dateOfBirth"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["dateOfBirth"]),
+                                                dateJoinedScheme = dr["dateJoinedScheme"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["dateJoinedScheme"]),
+                                                servicePeriod = (float)Convert.ToDecimal(dr["servicePeriod"]),
+                                                createdAt = dr["createdAt"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["createdAt"]),
+                                                updateAt = dr["updateAt"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["updateAt"])
+                                            };
+                                            result.Add(pass);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    return Ok("Nodata");
+                                }
+                            }
+                        }
+                        con.Close();
+                    }
+                }
+                else
+                {
+                    return Ok("PhoneNumber not match");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error occurred while processing the file.");
+            }
+            //return Ok("Member Found successfully","data:["+result+"]");
+            return Ok(new
+            {
+                success = true,
+                msg = "Member Found successfully",
+                data = result
+            });
+        }
+        [HttpPost("Insert_PasSystem")]
+        public IActionResult Insert_Pas_System([FromBody] PAS_SYSTEM pAS_SYSTEM)
+        {
+            try
+            {
+                using (SqlConnection Insertcon = new SqlConnection(_dbConnection))
+                {
+                    Insertcon.Open();
+                    string insertquery = "Insert into TBL_PAS_SYSTEM (ssn,memberNumber,nin,tin,phoneNumber,email," +
+                   "firstname,surname,otherNames,gender,membershipStatus,dateOfBirth,dateJoinedScheme,servicePeriod,createdAt,updateAt)" +
+                   "values(@ssn,@memberNumber,@nin,@tin,@phoneNumber,@email,@firstname,@surname,@otherNames,@gender," +
+                   "@membershipStatus,@dateOfBirth,@dateJoinedScheme,@servicePeriod,@createdAt,@updateAt)";
+                    using (SqlCommand cmd = new SqlCommand(insertquery, Insertcon))
+                    {
+                        //cmd.Parameters.AddWithValue("@id", pAS_SYSTEM.id);
+                        cmd.Parameters.AddWithValue("@ssn", pAS_SYSTEM.ssn);
+                        cmd.Parameters.AddWithValue("@memberNumber", pAS_SYSTEM.memberNumber);
+                        cmd.Parameters.AddWithValue("@nin", pAS_SYSTEM.nin);
+                        cmd.Parameters.AddWithValue("@tin", pAS_SYSTEM.tin);
+                        cmd.Parameters.AddWithValue("@phoneNumber", pAS_SYSTEM.phoneNumber);
+                        cmd.Parameters.AddWithValue("@email", pAS_SYSTEM.email);
+                        cmd.Parameters.AddWithValue("@firstname", pAS_SYSTEM.firstname);
+                        cmd.Parameters.AddWithValue("@surname", pAS_SYSTEM.surname);
+                        cmd.Parameters.AddWithValue("@otherNames", pAS_SYSTEM.otherNames);
+                        cmd.Parameters.AddWithValue("@gender", pAS_SYSTEM.gender);
+                        cmd.Parameters.AddWithValue("@membershipStatus", pAS_SYSTEM.membershipStatus);
+                        cmd.Parameters.AddWithValue("@dateOfBirth", pAS_SYSTEM.dateOfBirth);
+                        cmd.Parameters.AddWithValue("@dateJoinedScheme", pAS_SYSTEM.dateJoinedScheme);
+                        cmd.Parameters.AddWithValue("@servicePeriod", pAS_SYSTEM.servicePeriod);
+                        cmd.Parameters.AddWithValue("@createdAt", pAS_SYSTEM.createdAt);
+                        cmd.Parameters.AddWithValue("@updateAt", pAS_SYSTEM.updateAt);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return Ok("Data insert Successfully");
+                        }
+                        else
+                        {
+                            return StatusCode(500, "Insert failed");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                lg.lodwrite("Error reading campaign: " + ex.Message);
-                return StatusCode(500, "DB error while reading campaign");
+                return StatusCode(500, "Internal server error");
             }
-
-            if (campaignStatus.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase))
-            {
-                return Ok($"Request cannot be processed for Campaign_ID {campaignId} .");
-            }
-
-            string sftpBase = "/var/spool/asterisk/CallFile";
-            string sftpCampaignFolder = $"{sftpBase}/{campNameUpd}";
-            string localCampaignFolder = Path.Combine(UploadFolder, campNameUpd);
-            Directory.CreateDirectory(localCampaignFolder);
-
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_dbConnection))
-                {
-                    con.Open();
-                    string uppath = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_SOURCE_FILR_PATH=@src, VAR_DESTINATION_FILE_PATH=@dst WHERE VAR_CAMPAIGN_ID=@cid";
-                    using (SqlCommand ucmd = new SqlCommand(uppath, con))
-                    {
-                        ucmd.Parameters.AddWithValue("@src", filePath);
-                        ucmd.Parameters.AddWithValue("@dst", sftpCampaignFolder);
-                        ucmd.Parameters.AddWithValue("@cid", campaignId);
-                        ucmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                lg.lodwrite("Error updating paths: " + ex.Message);
-            }
-
-            var rows = FileDataReader.ReadTable(filePath).ToList();
-            if (!rows.Any())
-                return BadRequest("No data in excel");
-
-            List<string> callFiles = new();
-            Random rnd = new Random();
-
-            foreach (var row in rows.Skip(1))
-            {
-                if (row.Length < 2) continue;
-
-                string phoneNumber = row[0];
-                string extension = row[1];
-                string uniqueId = rnd.Next(100000, 999999).ToString();
-
-                string fileName = $"{phoneNumber}_{campId}_{uniqueId}.call";
-                string callFile = Path.Combine(localCampaignFolder, fileName);
-
-                try
-                {
-                    System.IO.File.WriteAllLines(callFile, new[]
-                    {
-                $"Channel:PJSIP/{phoneNumber}@out",
-                "WaitTime:30",
-                $"Maxretries:{maxRetries}",
-                $"RetryTime:{waitTime}",
-                "Context:from-interval",
-                $"Extension:{extension}",
-                $"setvar:caller_id=out{phoneNumber}",
-                $"setvar:campaign_id={campId}",
-                $"setvar:campaign_name={campNameOriginal}",
-                $"setvar:unique_id={uniqueId}",
-                "Priority:1",
-                "Archive:yes"
-            });
-
-                    callFiles.Add(callFile);
-                }
-                catch (Exception ex)
-                {
-                    lg.lodwrite($"Error writing call file {phoneNumber}: " + ex.Message);
-                }
-            }
-
-            var success = new List<string>();
-            var failed = new List<string>();
-            foreach (var cf in callFiles)
-            {
-                if (UploadToSftp(cf, sftpCampaignFolder))
-                    success.Add(Path.GetFileName(cf));
-                else
-                    failed.Add(Path.GetFileName(cf));
-            }
-
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_dbConnection))
-                {
-                    con.Open();
-                    string upStatus = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_STATUS='ACTIVE' WHERE VAR_CAMPAIGN_ID=@cid";
-                    using (SqlCommand cmd = new SqlCommand(upStatus, con))
-                    {
-                        cmd.Parameters.AddWithValue("@cid", campaignId);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                lg.lodwrite("Error updating status: " + ex.Message);
-            }
-
-            return Ok(new
-            {
-                SuccessCount = success.Count,
-                FailedCount = failed.Count,
-            });
         }
 
-        private bool UploadToSftp(string filePath, string remoteDir)
+        [HttpPut("Update_PasSystem")]
+        public IActionResult Update_Pas_System([FromBody] PAS_SYSTEM pAS_SYSTEM)
         {
-            const string host = "192.168.5.61";
-            const int port = 22;
-            const string username = "root";
-            const string password = "Kaizen%$#@!";
-
             try
             {
-                using var client = new SftpClient(host, port, username, password);
-                client.Connect();
-
-                if (!client.Exists(remoteDir))
+                using (SqlConnection con = new SqlConnection(_dbConnection))
                 {
-                    client.CreateDirectory(remoteDir);
+                    con.Open();
+
+                    string updateQuery = @"UPDATE TBL_PAS_SYSTEM
+                    SET memberNumber=@memberNumber,
+                        nin=@nin,
+                        tin=@tin,
+                        phoneNumber=@phoneNumber,
+                        email=@email,
+                        firstname=@firstname,
+                        surname=@surname,
+                        otherNames=@otherNames,
+                        gender=@gender,
+                        membershipStatus=@membershipStatus,
+                        dateOfBirth=@dateOfBirth,
+                        dateJoinedScheme=@dateJoinedScheme,
+                        servicePeriod=@servicePeriod,
+                        updateAt=@updateAt
+                    WHERE ssn=@ssn";
+
+                    using (SqlCommand cmd = new SqlCommand(updateQuery, con))
+                    {
+                        cmd.Parameters.AddWithValue("@ssn", pAS_SYSTEM.ssn);
+                        cmd.Parameters.AddWithValue("@memberNumber", pAS_SYSTEM.memberNumber);
+                        cmd.Parameters.AddWithValue("@nin", pAS_SYSTEM.nin);
+                        cmd.Parameters.AddWithValue("@tin", pAS_SYSTEM.tin);
+                        cmd.Parameters.AddWithValue("@phoneNumber", pAS_SYSTEM.phoneNumber);
+                        cmd.Parameters.AddWithValue("@email", pAS_SYSTEM.email);
+                        cmd.Parameters.AddWithValue("@firstname", pAS_SYSTEM.firstname);
+                        cmd.Parameters.AddWithValue("@surname", pAS_SYSTEM.surname);
+                        cmd.Parameters.AddWithValue("@otherNames", pAS_SYSTEM.otherNames);
+                        cmd.Parameters.AddWithValue("@gender", pAS_SYSTEM.gender);
+                        cmd.Parameters.AddWithValue("@membershipStatus", pAS_SYSTEM.membershipStatus);
+                        cmd.Parameters.AddWithValue("@dateOfBirth", pAS_SYSTEM.dateOfBirth);
+                        cmd.Parameters.AddWithValue("@dateJoinedScheme", pAS_SYSTEM.dateJoinedScheme);
+                        cmd.Parameters.AddWithValue("@servicePeriod", pAS_SYSTEM.servicePeriod);
+                        cmd.Parameters.AddWithValue("@updateAt", DateTime.Now);
+
+                        int rows = cmd.ExecuteNonQuery();
+
+                        if (rows > 0)
+                            return Ok("Data updated successfully");
+                        else
+                            return NotFound("Record not found");
+                    }
                 }
-
-                string remotePath = $"{remoteDir}/{Path.GetFileName(filePath)}";
-                Console.WriteLine($"Uploading {filePath} → {remotePath}");
-
-                using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                client.UploadFile(fileStream, remotePath, true);
-
-                client.Disconnect();
-                return true;
             }
             catch (Exception ex)
             {
-                lg.lodwrite($"Upload failed for {filePath}: {ex.Message}");
-                return false;
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("Delete_PasSystem")]
+        public IActionResult Delete_Pas_System([FromQuery] int ssn)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+
+                    string deleteQuery = @"DELETE FROM TBL_PAS_SYSTEM WHERE ssn = @ssn";
+
+                    using (SqlCommand cmd = new SqlCommand(deleteQuery, con))
+                    {
+                        cmd.Parameters.Add("@ssn", SqlDbType.Int).Value = ssn;
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected == 0)
+                        {
+                            return NotFound(new
+                            {
+                                message = "No record found with the given ID"
+                            });
+                        }
+
+                        return Ok(new
+                        {
+                            deletedId = ssn,
+                            message = "Record deleted successfully"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Internal server error occurred",
+                    error = ex.Message
+                });
             }
         }
 
+        [HttpPost("InsertBlackList")]
+        public IActionResult InsertBlackList([FromBody] TBL_BLACKLIST blacklist)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+                    string insertqueryd = @"Insert into TBL_BLACKLIST (VAR_MOBILE_NUMBER)values" +
+                        "(@VAR_MOBILE_NUMBER)";
+                    using (SqlCommand CMD = new SqlCommand(insertqueryd, con))
+                    {
+                        CMD.Parameters.AddWithValue("@VAR_MOBILE_NUMBER", blacklist.mobile_number);
+
+                        int rowsAffected = CMD.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return Ok("Data insert Successfully");
+                        }
+                        else
+                        {
+                            return StatusCode(500, "Insert Failed");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("DeleteBlackList")]
+        public IActionResult Delete_BlackList([FromQuery] string NUMBER)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+
+                    string deleteQuery = @"DELETE FROM TBL_BLACKLIST WHERE VAR_MOBILE_NUMBER= '" + NUMBER + "'";
+
+                    using (SqlCommand cmd = new SqlCommand(deleteQuery, con))
+                    {
+                        //cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected == 0)
+                        {
+                            return NotFound(new
+                            {
+                                message = "No record found with the given ID"
+                            });
+                        }
+
+                        return Ok(new
+                        {
+                            NUMBER = NUMBER,
+                            message = "Record deleted successfully"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Internal server error occurred",
+                    error = ex.Message
+                });
+            }
 
 
+
+
+        }
     }
- }
+}
