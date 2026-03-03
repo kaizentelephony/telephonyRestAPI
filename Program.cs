@@ -59,36 +59,55 @@
 ////app.Run();
 
 #endregion
+// var builder = WebApplication.CreateBuilder(args);
+
+// builder.Services.AddControllers()
+
+//     .AddJsonOptions(options =>
+
+//     {
+
+//         options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
+//     });
+
+// builder.Services.AddEndpointsApiExplorer();
+
+// builder.Services.AddSwaggerGen();
+
+// var app = builder.Build();
+
+// app.UseCors(policy =>
+
+//     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+// app.UseSwagger();
+
+// app.UseSwaggerUI();
+
+// app.UseHttpsRedirection();
+
+// app.UseAuthorization();
+
+// app.MapControllers();
+
+// app.Run();
+
+using OfficeOpenXml;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
+// ✅ Correct EPPlus license setting
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-    .AddJsonOptions(options =>
-
-    {
-
-        options.JsonSerializerOptions.PropertyNamingPolicy = null;
-
-    });
-
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors(policy =>
-
-    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
 app.UseSwagger();
-
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
