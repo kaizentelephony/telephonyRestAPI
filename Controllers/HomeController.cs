@@ -4,7 +4,7 @@ using Call_Details_API.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-// using OfficeOpenXml;
+//using OfficeOpenXml;
 using PushAPI.Model;
 using Renci.SshNet;
 using Renci.SshNet.Sftp;
@@ -21,6 +21,7 @@ using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Reflection.PortableExecutable;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -43,19 +44,18 @@ namespace PushAPIContractNumber
         const string host = "192.168.5.61";
         const int port = 22;
         const string username = "root";
-        const string password = "Kaizen%$#@!";
+        //const string password = "Kaizen%$#@!";
+        const string password = "Kaizen^%$#@!";
 
-
+        private readonly IConfiguration _configuration;
         public ivrController(IConfiguration configuration)
         {
             //string dbcon=""
             Log lg = new Log();
             lg.lodwrite("databaseconnection");
             _dbConnection = configuration.GetConnectionString("dbcon");
+            //_configuration = configuration.GetConnectionString("dbcon");
         }
-
-
-
         private void UpdateRowscalldetails(string data)
         {
             using (SqlConnection sqlcon = new SqlConnection(_dbConnection))
@@ -155,6 +155,7 @@ namespace PushAPIContractNumber
             return Ok(results);
         }
         /// GetBy AgentId
+
         [HttpPost("agenthistory")]
         public IActionResult getcalltranferdetailsbyagentid([FromForm] string agent_id)
         {
@@ -314,7 +315,6 @@ namespace PushAPIContractNumber
             return Ok(results);
         }
 
-
         [HttpPost("savefile")]
         public IActionResult FileDownload([FromForm] string Unique_id)
         {
@@ -382,6 +382,7 @@ namespace PushAPIContractNumber
                 return StatusCode(500, "Internal server error occurred while processing the file.");
             }
         }
+
 
         [HttpPost("updateuniqueidbycalldetails")]
         public IActionResult UpdateUniqueIds([FromBody] calldetails request)
@@ -520,7 +521,6 @@ namespace PushAPIContractNumber
             }
             return Ok("Success");
         }
-
 
         [HttpGet("allcalls")]
 
@@ -1004,9 +1004,6 @@ namespace PushAPIContractNumber
                 using (SqlConnection con = new SqlConnection(_dbConnection))
                 {
                     con.Open();
-
-
-
                     string CMquery = "SELECT COUNT(*) FROM TBL_CAMPAIGN_MASTER_V2 where VAR_CAMPAIGN_ID=@VAR_CAMPAIGN_ID";
                     using (SqlCommand CMcmd = new SqlCommand(CMquery, con))
                     {
@@ -1063,15 +1060,327 @@ namespace PushAPIContractNumber
                                                 {
                                                     AddCampaignParameters(Icmd, dNIS_TABLE);
                                                     int rows = Icmd.ExecuteNonQuery();
+                                                    #region
+                                                    //if (rows > 0)
+                                                    //{
+                                                    //    return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
 
-                                                    if (rows > 0)
+                                                    //    string selectquery = "SELECT * FROM TBL_DNIS WHERE VAR_CAMPAIGN_ID=Campaign_id";
+
+                                                    //    string updateExtensionQuery = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_EXTENSION_NUMBER = @Extension_Number  WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+                                                    //    using (SqlCommand updateCmd = new SqlCommand(updateExtensionQuery, con))
+                                                    //    {
+                                                    //        updateCmd.Parameters.AddWithValue(
+                                                    //            "@EXTENSION_NUMBER",
+                                                    //            (object?)dNIS_TABLE.Extension_Number ?? DBNull.Value
+                                                    //        );
+
+                                                    //        updateCmd.Parameters.AddWithValue(
+                                                    //            "@VAR_CAMPAIGN_ID",
+                                                    //            dNIS_TABLE.campaign_id
+                                                    //        );
+
+                                                    //        updateCmd.ExecuteNonQuery();
+                                                    //    }
+                                                    //    //return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
+                                                    //}
+                                                    //else
+                                                    //{
+                                                    //    return Content("Insert failed");
+                                                    //}
+                                                    #endregion
+                                                    #region
+                                                    //if (rows > 0)
+                                                    //{
+
+                                                    //    // =========================================================
+                                                    //    // 1. SELECT DNIS AND EXTENSION NUMBER FROM TBL_DNIS
+                                                    //    // =========================================================
+
+                                                    //    string selectDnisQuery = @"SELECT VAR_DNIS  FROM TBL_DNIS  WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+                                                    //    string? selectedDnisFromDb = null;
+                                                    //    object extensionNumber = DBNull.Value;
+
+                                                    //    using (SqlCommand selectCmd = new SqlCommand(selectDnisQuery, con))
+                                                    //    {
+                                                    //        selectCmd.Parameters.AddWithValue(
+                                                    //            "@VAR_CAMPAIGN_ID",
+                                                    //            dNIS_TABLE.campaign_id
+                                                    //        );
+
+                                                    //        using (SqlDataReader selectreader = selectCmd.ExecuteReader())
+                                                    //        {
+                                                    //            if (selectreader.Read())
+                                                    //            {
+                                                    //                selectedDnisFromDb = selectreader["VAR_DNIS"]?.ToString();
+
+                                                    //                if (reader["VAR_EXTENSION_NUMBER"] != DBNull.Value)
+                                                    //                {
+                                                    //                    extensionNumber = reader["VAR_EXTENSION_NUMBER"];
+                                                    //                }
+                                                    //            }
+                                                    //        }
+                                                    //    }
+
+                                                    //    //// =========================================================
+                                                    //    //// 2. CHECK DNIS RECORD FOUND
+                                                    //    //// =========================================================
+
+                                                    //    //if (string.IsNullOrWhiteSpace(selectedDnisFromDb))
+                                                    //    //{
+                                                    //    //    return Content(
+                                                    //    //        $"Campaign ID: {dNIS_TABLE.campaign_id} created, " +
+                                                    //    //        "but DNIS record was not found in TBL_DNIS."
+                                                    //    //    );
+                                                    //    //}
+
+                                                    //    // =========================================================
+                                                    //    // 3. UPDATE EXTENSION NUMBER IN CAMPAIGN MASTER
+                                                    //    // =========================================================
+
+                                                    //    string updateExtensionQuery = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_EXTENSION_NUMBER = @EXTENSION_NUMBER WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+                                                    //    using (SqlCommand updateCmd = new SqlCommand(updateExtensionQuery, con))
+                                                    //    {
+                                                    //        updateCmd.Parameters.AddWithValue(
+                                                    //            "@EXTENSION_NUMBER",
+                                                    //            extensionNumber
+                                                    //        );
+
+                                                    //        updateCmd.Parameters.AddWithValue(
+                                                    //            "@VAR_CAMPAIGN_ID",
+                                                    //            dNIS_TABLE.campaign_id
+                                                    //        );
+
+                                                    //        int updateRows = updateCmd.ExecuteNonQuery();
+
+                                                    //        if (updateRows > 0)
+                                                    //        {
+                                                    //            //return Content(
+                                                    //            //    $"Campaign ID: {dNIS_TABLE.campaign_id}, " +
+                                                    //            //    $"DNIS Number: {selectedDnisFromDb}, " +
+                                                    //            //    $"Extension Number: {extensionNumber}, " +
+                                                    //            //    "Successfully Created!"
+                                                    //            //);
+                                                    //        }
+                                                    //        else
+                                                    //        {
+                                                    //            return Content(
+                                                    //                $"Campaign ID: {dNIS_TABLE.campaign_id} created, " +
+                                                    //                "but VAR_EXTENSION_NUMBER update failed."
+                                                    //            );
+                                                    //        }
+                                                    //    }
+                                                    //    return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
+                                                    //}
+                                                    //else
+                                                    //{
+                                                    //    return Content("Insert failed");
+                                                    //}
+                                                    #endregion
+                                                    #region
+                                                    //if (rows > 0)
+                                                    //{
+                                                    //    // =========================================================
+                                                    //    // 1. SELECT DNIS FROM TBL_DNIS USING CAMPAIGN ID
+                                                    //    // =========================================================
+
+                                                    //    string selectDnisQuery = @"SELECT TOP 1 VAR_DNIS   FROM TBL_DNIS WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+                                                    //    string? selectedDnisFromDb = null;
+
+                                                    //    using (SqlCommand selectCmd = new SqlCommand(selectDnisQuery, con))
+                                                    //    {
+                                                    //        selectCmd.Parameters.AddWithValue(
+                                                    //            "@VAR_CAMPAIGN_ID",
+                                                    //            dNIS_TABLE.campaign_id
+                                                    //        );
+
+                                                    //        using (SqlDataReader selectReader = selectCmd.ExecuteReader())
+                                                    //        {
+                                                    //            if (selectReader.Read())
+                                                    //            {
+                                                    //                selectedDnisFromDb =
+                                                    //                    selectReader["VAR_DNIS"]?.ToString();
+                                                    //            }
+                                                    //        }
+                                                    //    }
+
+                                                    //    // =========================================================
+                                                    //    // 2. CHECK DNIS
+                                                    //    // =========================================================
+
+                                                    //    if (string.IsNullOrWhiteSpace(selectedDnisFromDb))
+                                                    //    {
+                                                    //        return Content(
+                                                    //            $"Campaign ID: {dNIS_TABLE.campaign_id} created, " +
+                                                    //            "but DNIS was not found in TBL_DNIS."
+                                                    //        );
+                                                    //    }
+
+                                                    //    // =========================================================
+                                                    //    // 3. UPDATE EXTENSION NUMBER IN CAMPAIGN MASTER
+                                                    //    // =========================================================
+
+                                                    //    string updateExtensionQuery = @"UPDATE TBL_CAMPAIGN_MASTER_V2
+                                                    //                                    SET VAR_EXTENSION_NUMBER = @EXTENSION_NUMBER 
+                                                    //                                    WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+                                                    //    using (SqlCommand updateCmd =
+                                                    //           new SqlCommand(updateExtensionQuery, con))
+                                                    //    {
+                                                    //        updateCmd.Parameters.AddWithValue(
+                                                    //            "@EXTENSION_NUMBER",
+                                                    //            (object?)dNIS_TABLE.Extension_Number ?? DBNull.Value
+                                                    //        );
+
+                                                    //        updateCmd.Parameters.AddWithValue(
+                                                    //            "@VAR_CAMPAIGN_ID",
+                                                    //            dNIS_TABLE.campaign_id
+                                                    //        );
+
+                                                    //        int updateRows = updateCmd.ExecuteNonQuery();
+
+                                                    //        if (updateRows <= 0)
+                                                    //        {
+                                                    //            return Content(
+                                                    //                $"Campaign ID: {dNIS_TABLE.campaign_id} created, " +
+                                                    //                "but VAR_EXTENSION_NUMBER update failed."
+                                                    //            );
+                                                    //        }
+                                                    //    }
+
+                                                    //    // =========================================================
+                                                    //    // 4. SUCCESS RESPONSE
+                                                    //    // =========================================================
+
+                                                    //    return Content(
+                                                    //        $"Campaign ID: {dNIS_TABLE.campaign_id}, " +
+                                                    //        $"DNIS Number: {selectedDnisFromDb}, " +
+                                                    //        $"Extension Number: {dNIS_TABLE.Extension_Number}, " +
+                                                    //        "Successfully Created!"
+                                                    //    );
+                                                    //}
+                                                    //else
+                                                    //{
+                                                    //    return Content("Insert failed");
+                                                    //}
+                                                    #endregion
+                                                    // =========================================================
+                                                    // 1. GET DNIS AND DNIS_EXTENSION FROM TBL_DNIS
+                                                    // =========================================================
+
+                                                    string selectDnisQuery = @"
+    SELECT TOP 1 
+           VAR_DNIS
+    FROM TBL_DNIS
+    WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID
+    ORDER BY VAR_DNIS";
+
+                                                    string? selectedDnisFromDb = null;
+                                                    object extensionNumberFromDnis = DBNull.Value;
+
+                                                    using (SqlCommand selectCmd = new SqlCommand(selectDnisQuery, con))
                                                     {
-                                                        return Content($"Campaign ID: {dNIS_TABLE.campaign_id}, DNIS Number: {selectedDnis}, Successfully Created!");
+                                                        selectCmd.Parameters.AddWithValue(
+                                                            "@VAR_CAMPAIGN_ID",
+                                                            dNIS_TABLE.campaign_id
+                                                        );
+
+                                                        using (SqlDataReader selectReader = selectCmd.ExecuteReader())
+                                                        {
+                                                            if (selectReader.Read())
+                                                            {
+                                                                // Get DNIS
+                                                                selectedDnisFromDb =
+                                                                    selectReader["VAR_DNIS"]?.ToString();
+
+                                                                // Get DNIS_EXTENSION
+                                                                //if (selectReader["VAR_DNIS"] != DBNull.Value)
+                                                                //{
+                                                                //    extensionNumberFromDnis =
+                                                                //        selectReader["VAR_DNIS"];
+                                                                //}
+                                                            }
+                                                        }
                                                     }
-                                                    else
+
+                                                    // =========================================================
+                                                    // 2. CHECK DNIS RECORD
+                                                    // =========================================================
+
+                                                    if (string.IsNullOrWhiteSpace(selectedDnisFromDb))
                                                     {
-                                                        return Content("Insert failed");
+                                                        return Content(
+                                                            $"Campaign ID: {dNIS_TABLE.campaign_id} created, " +
+                                                            "but DNIS was not found in TBL_DNIS."
+                                                        );
                                                     }
+
+                                                    // =========================================================
+                                                    // 3. CHECK DNIS_EXTENSION
+                                                    // =========================================================
+
+                                                    //if (extensionNumberFromDnis == DBNull.Value ||
+                                                    //    string.IsNullOrWhiteSpace(extensionNumberFromDnis.ToString()))
+                                                    //{
+                                                    //    return Content(
+                                                    //        $"Campaign ID: {dNIS_TABLE.campaign_id} created, " +
+                                                    //        $"DNIS Number: {selectedDnisFromDb}, " +
+                                                    //        "but DNIS_EXTENSION was not found in TBL_DNIS."
+                                                    //    );
+                                                    //}
+
+                                                    // =========================================================
+                                                    // 4. UPDATE EXTENSION NUMBER IN CAMPAIGN MASTER
+                                                    // =========================================================
+
+                                                    string updateExtensionQuery = @"
+    UPDATE TBL_CAMPAIGN_MASTER_V2
+    SET VAR_EXTENSION_NUMBER = @EXTENSION_NUMBER
+    WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+
+                                                    using (SqlCommand updateCmd =
+                                                           new SqlCommand(updateExtensionQuery, con))
+                                                    {
+                                                        updateCmd.Parameters.AddWithValue(
+                                                            "@EXTENSION_NUMBER",
+                                                            selectedDnisFromDb
+                                                        );
+                                                        //updateCmd.Parameters.AddWithValue(
+                                                        //    "@EXTENSION_NUMBER",
+                                                        //    extensionNumberFromDnis
+                                                        //);
+
+                                                        updateCmd.Parameters.AddWithValue(
+                                                            "@VAR_CAMPAIGN_ID",
+                                                            dNIS_TABLE.campaign_id
+                                                        );
+
+                                                        int updateRows = updateCmd.ExecuteNonQuery();
+
+                                                        if (updateRows <= 0)
+                                                        {
+                                                            return Content(
+                                                                $"Campaign ID: {dNIS_TABLE.campaign_id} created, " +
+                                                                "but VAR_EXTENSION_NUMBER update failed."
+                                                            );
+                                                        }
+                                                    }
+
+                                                    // =========================================================
+                                                    // 5. SUCCESS RESPONSE
+                                                    // =========================================================
+
+                                                    return Content(
+                                                        $"Campaign ID: {dNIS_TABLE.campaign_id}, " +
+                                                        $"DNIS Number: {selectedDnisFromDb}, " +
+                                                        //$"Extension Number: {extensionNumberFromDnis}, " +
+                                                        "Successfully Created!"
+                                                    );
+
                                                 }
                                             }
                                         }
@@ -1098,192 +1407,231 @@ namespace PushAPIContractNumber
                 return Content("Unexpected Error: " + ex.Message);
             }
         }
-        #region
-        //[HttpPut("UpdateCampaignMaster")]
-        //public IActionResult UpdateCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
-        //{
-        //    try
-        //    {
-        //        List<string> ErrorMessage = new List<string>();
 
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
-        //        {
-        //            ErrorMessage.Add("Campaign_id is mandatory");
-        //        }
-
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
-        //        {
-        //            ErrorMessage.Add("Campaign_Name is mandatory");
-        //        }
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
-        //        {
-        //            ErrorMessage.Add("Status is mandatory");
-        //        }
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
-        //        {
-        //            ErrorMessage.Add("Time_Zone is mandatory");
-        //        }
-
-
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
-        //        {
-        //            ErrorMessage.Add("Start_date is mandatory");
-        //        }
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
-        //        {
-        //            ErrorMessage.Add("end_date is mandatory");
-        //        }
-
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
-        //        {
-        //            ErrorMessage.Add("Start_time is mandatory");
-        //        }
-
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
-        //        {
-        //            ErrorMessage.Add("End_time is mandatory");
-        //        }
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
-        //        {
-        //            ErrorMessage.Add("Dialing_Mode is mandatory");
-        //        }
-
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
-        //        {
-        //            ErrorMessage.Add("Retry_intervals is mandatory");
-        //        }
-        //        if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
-        //        {
-        //            ErrorMessage.Add("Retry_attempts is mandatory");
-        //        }
-        //        if (ErrorMessage.Count > 0)
-        //        {
-        //            return Ok(new { ErrorMessage });
-        //        }
-        //        string Campaignquery = @"UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_CAMPAIGN_NAME = @VAR_CAMPAIGN_NAME,
-        //            VAR_STATUS = @VAR_STATUS,VAR_CAMPAIGN_DESCRIPTION = @VAR_CAMPAIGN_DESCRIPTION,
-        //            VAR_CAMPAIGN_TYPE = @VAR_CAMPAIGN_TYPE,VAR_TIME_ZONE = @VAR_TIME_ZONE,VAR_CAMPAIN_CREATED_DATE=@VAR_CAMPAIN_CREATED_DATE,
-        //            VAR_CAMPAIN_START_DATE=@VAR_CAMPAIN_START_DATE,VAR_CAMPAIN_END_DATE=@VAR_CAMPAIN_END_DATE,
-        //            VAR_CAMPAIGN_START_TIME = @VAR_CAMPAIGN_START_TIME,VAR_CAMPAIGN_END_TIME = @VAR_CAMPAIGN_END_TIME,
-        //            VAR_DIALING_MODE = @VAR_DIALING_MODE,VAR_MAX_CONCURRENT_CALLS = @VAR_MAX_CONCURRENT_CALLS,
-        //            VAR_CALL_DURATION_LIMIT = @VAR_CALL_DURATION_LIMIT,VAR_RETRY_ATTEMPTS = @VAR_RETRY_ATTEMPTS,
-        //            VAR_RETRY_INTERVALS = @VAR_RETRY_INTERVALS,VAR_TEAMS = @VAR_TEAMS,
-        //            VAR_MAX_LEADS = @VAR_MAX_LEADS,VAR_SKILL_TAGS = @VAR_SKILL_TAGS,
-        //            VAR_IS_RECORDING = @VAR_IS_RECORDING WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
-
-        //        using (SqlConnection UCon = new SqlConnection(_dbConnection))
-        //        {
-        //            UCon.Open();
-
-        //            using (SqlCommand cmd = new SqlCommand(Campaignquery, UCon))
-        //            {
-        //                // Add parameters
-
-        //                AddCampaignParameters(cmd, dNIS_TABLE);
-        //                int Count = cmd.ExecuteNonQuery();
-
-        //                if (Count > 0)
-        //                {
-        //                    return Ok($" Campaign updated successfully  {dNIS_TABLE.campaign_id}");
-        //                }
-        //                else
-        //                {
-        //                    return NotFound(new { Message = "No record found with the provided Campaign ID" });
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { Message = "An error occurred while updating the campaign.", Error = ex.Message });
-        //    }
-        //}
-        #endregion
-
-
-
+       
 
         [HttpPost("UpdateCampaignMaster")]
-        public IActionResult UpdateCampaignMaster([FromBody] DNIS_TABLE dNIS_TABLE)
+        public IActionResult UpdateCampaignMaster([FromBody] CampaignMaster request)
         {
             try
             {
-                if (dNIS_TABLE == null)
+                // ============================================================
+                // 1. VALIDATE REQUEST
+                // ============================================================
+
+                if (request == null)
                     return BadRequest("Request body is missing");
 
-                List<string> errorMessage = new();
+                if (string.IsNullOrWhiteSpace(request.Campaign_id))
+                    return BadRequest("Campaign_id is mandatory");
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_id))
-                    errorMessage.Add("Campaign_id is mandatory");
+                string query = string.Empty;
+                string updatedField = string.Empty;
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.campaign_name))
-                    errorMessage.Add("Campaign_Name is mandatory");
+                // ============================================================
+                // 2. CHECK WHICH FIELD NEEDS TO BE UPDATED
+                // ============================================================
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Status))
-                    errorMessage.Add("Status is mandatory");
+                if (!string.IsNullOrWhiteSpace(request.Campaign_Name))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_CAMPAIGN_NAME = @Value WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Time_Zone))
-                    errorMessage.Add("Time_Zone is mandatory");
+                    updatedField = "Campaign_Name";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Status))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2 SET VAR_STATUS = @Value WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Date))
-                    errorMessage.Add("Start_date is mandatory");
+                    updatedField = "Status";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Campaign_Description))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_CAMPAIGN_DESCRIPTION = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Date))
-                    errorMessage.Add("End_date is mandatory");
+                    updatedField = "Campaign_Description";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Campaign_Type))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_CAMPAIGN_TYPE = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Start_Time))
-                    errorMessage.Add("Start_time is mandatory");
+                    updatedField = "Campaign_Type";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Time_Zone))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_TIME_ZONE = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.End_Time))
-                    errorMessage.Add("End_time is mandatory");
+                    updatedField = "Time_Zone";
+                }
+                else if (request.Start_Date.HasValue)
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_CAMPAIN_START_DATE = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Dialing_Mode))
-                    errorMessage.Add("Dialing_Mode is mandatory");
+                    updatedField = "Start_Date";
+                }
+                else if (request.End_Date.HasValue)
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_CAMPAIN_END_DATE = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_intervals))
-                    errorMessage.Add("Retry_intervals is mandatory");
+                    updatedField = "End_Date";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Dialing_Mode))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_DIALING_MODE = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (string.IsNullOrWhiteSpace(dNIS_TABLE.Retry_attempts))
-                    errorMessage.Add("Retry_attempts is mandatory");
+                    updatedField = "Dialing_Mode";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Max_Concurrent_Calls))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_MAX_CONCURRENT_CALLS = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                if (errorMessage.Count > 0)
-                    return BadRequest(new { Errors = errorMessage });
+                    updatedField = "Max_Concurrent_Calls";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Call_duration_Limit))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_CALL_DURATION_LIMIT = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
 
-                string query = @"
-                UPDATE TBL_CAMPAIGN_MASTER_V2 SET
-                    VAR_CAMPAIGN_NAME = @VAR_CAMPAIGN_NAME,
-                    VAR_STATUS = @VAR_STATUS,
-                    VAR_CAMPAIGN_DESCRIPTION = @VAR_CAMPAIGN_DESCRIPTION,
-                    VAR_CAMPAIGN_TYPE = @VAR_CAMPAIGN_TYPE,
-                    VAR_TIME_ZONE = @VAR_TIME_ZONE,
-                    VAR_CAMPAIN_CREATED_DATE = @VAR_CAMPAIN_CREATED_DATE,
-                    VAR_CAMPAIN_START_DATE = @VAR_CAMPAIN_START_DATE,
-                    VAR_CAMPAIN_END_DATE = @VAR_CAMPAIN_END_DATE,
-                    VAR_CAMPAIGN_START_TIME = @VAR_CAMPAIGN_START_TIME,
-                    VAR_CAMPAIGN_END_TIME = @VAR_CAMPAIGN_END_TIME,
-                    VAR_DIALING_MODE = @VAR_DIALING_MODE,
-                    VAR_MAX_CONCURRENT_CALLS = @VAR_MAX_CONCURRENT_CALLS,
-                    VAR_CALL_DURATION_LIMIT = @VAR_CALL_DURATION_LIMIT,
-                    VAR_RETRY_ATTEMPTS = @VAR_RETRY_ATTEMPTS,
-                    VAR_RETRY_INTERVALS = @VAR_RETRY_INTERVALS,
-                    VAR_TEAMS = @VAR_TEAMS,
-                    VAR_MAX_LEADS = @VAR_MAX_LEADS,
-                    VAR_SKILL_TAGS = @VAR_SKILL_TAGS,
-                    VAR_IS_RECORDING = @VAR_IS_RECORDING
-                WHERE VAR_CAMPAIGN_ID = @VAR_CAMPAIGN_ID";
+                    updatedField = "Call_duration_Limit";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Teams))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_TEAMS = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
+
+                    updatedField = "Teams";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Max_Leads))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_MAX_LEADS = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
+
+                    updatedField = "Max_Leads";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Skill_Tags))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_SKILL_TAGS = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
+
+                    updatedField = "Skill_Tags";
+                }
+                else if (!string.IsNullOrWhiteSpace(request.Is_Recording))
+                {
+                    query = @"
+                UPDATE TBL_CAMPAIGN_MASTER_V2
+                SET VAR_IS_RECORDING = @Value
+                WHERE VAR_CAMPAIGN_ID = @Campaign_id";
+
+                    updatedField = "Is_Recording";
+                }
+                else
+                {
+                    return BadRequest("No field value provided for update");
+                }
+
+                // ============================================================
+                // 3. GET VALUE BASED ON FIELD
+                // ============================================================
+
+                object value;
+
+                if (updatedField == "Campaign_Name")
+                    value = request.Campaign_Name!;
+                else if (updatedField == "Status")
+                    value = request.Status!;
+                else if (updatedField == "Campaign_Description")
+                    value = request.Campaign_Description!;
+                else if (updatedField == "Campaign_Type")
+                    value = request.Campaign_Type!;
+                else if (updatedField == "Time_Zone")
+                    value = request.Time_Zone!;
+                else if (updatedField == "Start_Date")
+                    value = request.Start_Date!.Value;
+                else if (updatedField == "End_Date")
+                    value = request.End_Date!.Value;
+                else if (updatedField == "Dialing_Mode")
+                    value = request.Dialing_Mode!;
+                else if (updatedField == "Max_Concurrent_Calls")
+                    value = request.Max_Concurrent_Calls!;
+                else if (updatedField == "Call_duration_Limit")
+                    value = request.Call_duration_Limit!;
+                else if (updatedField == "Teams")
+                    value = request.Teams!;
+                else if (updatedField == "Max_Leads")
+                    value = request.Max_Leads!;
+                else if (updatedField == "Skill_Tags")
+                    value = request.Skill_Tags!;
+                else
+                    value = request.Is_Recording!;
+
+                // ============================================================
+                // 4. EXECUTE UPDATE
+                // ============================================================
 
                 using SqlConnection con = new(_dbConnection);
                 using SqlCommand cmd = new(query, con);
 
-                AddCampaignParameters(cmd, dNIS_TABLE);
+                cmd.Parameters.AddWithValue("@Campaign_id", request.Campaign_id);
+                cmd.Parameters.AddWithValue("@Value", value);
 
                 con.Open();
+
                 int rows = cmd.ExecuteNonQuery();
 
-                if (rows == 0)
-                    return NotFound("No campaign found with given Campaign ID");
+                // ============================================================
+                // 5. CHECK RESULT
+                // ============================================================
 
-                return Ok($"Campaign updated successfully: {dNIS_TABLE.campaign_id}");
+                if (rows == 0)
+                {
+                    return NotFound(new
+                    {
+                        Message = "Campaign not found",
+                        Campaign_id = request.Campaign_id
+                    });
+                }
+
+                // ============================================================
+                // 6. SUCCESS
+                // ============================================================
+
+                return Ok(new
+                {
+                    Message = $"{updatedField} updated successfully",
+                    Campaign_id = request.Campaign_id,
+                    Updated_Field = updatedField,
+                    Updated_Value = value
+                });
             }
             catch (Exception ex)
             {
@@ -1294,8 +1642,6 @@ namespace PushAPIContractNumber
                 });
             }
         }
-
-
         private void AddCampaignParameters(SqlCommand cmd, DNIS_TABLE dNIS_TABLE)
         {
             cmd.Parameters.AddWithValue("@VAR_CAMPAIGN_ID", dNIS_TABLE.campaign_id);
@@ -1319,256 +1665,1061 @@ namespace PushAPIContractNumber
             cmd.Parameters.AddWithValue("@VAR_SKILL_TAGS", dNIS_TABLE.Skill_Tags ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@VAR_IS_RECORDING", dNIS_TABLE.Is_Recording ?? (object)DBNull.Value);
         }
-
-        #region
-        //[HttpPost("outdial")]
-        //public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
-        //{
-        //    if (file == null || file.Length == 0)
-        //        return BadRequest("No file uploaded!");
-
-        //    Directory.CreateDirectory(UploadFolder);
-        //    string filePath = Path.Combine(UploadFolder, file.FileName);
-
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //        await file.CopyToAsync(stream);
-
-        //    var rows = FileDataReader.ReadTable(filePath).ToList();
-        //    if (rows.Count <= 1)
-        //        return BadRequest("No data rows found in Excel.");
-
-        //    var records = new ConcurrentBag<TBL_CAMPAIGN_DETAILS>();
-
-        //    Parallel.ForEach(
-        //        rows.Skip(1),
-        //        new ParallelOptions { MaxDegreeOfParallelism = 10 },
-        //        arr =>
-        //        {
-        //            if (arr.Length < 2) return;
-
-        //            string callerId = arr[0]?.ToString()?.Trim();
-        //            string extension = arr[1]?.ToString()?.Trim();
-
-        //            if (string.IsNullOrEmpty(callerId) || string.IsNullOrEmpty(extension))
-        //                return;
-
-        //            string channel = $"{callerId}";
-
-        //            // ✅ FIX: UNIQUE FILE NAME (NO COLLISION)
-        //            string callFileName = $"{callerId}_{Guid.NewGuid():N}.call";
-        //            string localCallFile = Path.Combine(UploadFolder, callFileName);
-
-        //            System.IO.File.WriteAllLines(localCallFile, new[]
-        //             {
-        //                 $"Setvar:caller_id=out{callerId}",
-        //                 $"Channel:{channel}",
-        //                 "WaitTime:30",
-        //                 "MaxRetries:0",
-        //                 "RetryTime:0",
-        //                 "Context:from-interval",
-        //                 $"Extension:{extension}",
-        //                 "Priority:1",
-        //                 "Archive:yes"
-        //            });
-
-        //            records.Add(new TBL_CAMPAIGN_DETAILS
-        //            {
-        //                VAR_CALLER_ID = callerId,
-        //                VAR_CHANNEL_ID = channel,
-        //                VAR_WAIT_TIME = 30,
-        //                VAR_MAXRETRIES = 0,
-        //                VAR_RETRYTIME = 0,
-        //                VAR_EXTENSION = extension,
-        //                VAR_STATUS = "PENDING"
-
-        //            });
-        //        });
-
-        //    BulkInsert(records.ToList());
-
-        //    return Ok(new
-        //    {
-        //        Message = "Outdial Call Successfully Created",
-        //        TotalInserted = records.Count
-        //    });
-        //}
-
-        //private void BulkInsert(List<TBL_CAMPAIGN_DETAILS> data)
-        //{
-        //    if (data == null || data.Count == 0)
-        //        return;
-
-        //    using var con = new SqlConnection(_dbConnection);
-        //    con.Open();
-
-        //    using var bulk = new SqlBulkCopy(con)
-        //    {
-        //        DestinationTableName = "TBL_CAMPAIGNDETAILS"
-        //    };
-
-        //    bulk.ColumnMappings.Add("VAR_CALLER_ID", "VAR_CALLER_ID");
-        //    bulk.ColumnMappings.Add("VAR_CHANNEL_ID", "VAR_CHANNEL_ID");
-        //    bulk.ColumnMappings.Add("VAR_WAIT_TIME", "VAR_WAIT_TIME");
-        //    bulk.ColumnMappings.Add("VAR_MAXRETRIES", "VAR_MAXRETRIES");
-        //    bulk.ColumnMappings.Add("VAR_RETRYTIME", "VAR_RETRYTIME");
-        //    bulk.ColumnMappings.Add("VAR_EXTENSION", "VAR_EXTENSION");
-        //    bulk.ColumnMappings.Add("VAR_STATUS", "VAR_STATUS");
-
-        //    var table = new DataTable();
-        //    table.Columns.Add("VAR_CALLER_ID");
-        //    table.Columns.Add("VAR_CHANNEL_ID");
-        //    table.Columns.Add("VAR_WAIT_TIME", typeof(int));
-        //    table.Columns.Add("VAR_MAXRETRIES", typeof(int));
-        //    table.Columns.Add("VAR_RETRYTIME", typeof(int));
-        //    table.Columns.Add("VAR_EXTENSION");
-        //    table.Columns.Add("VAR_STATUS");
-
-        //    foreach (var r in data)
-        //    {
-        //        table.Rows.Add(
-        //            r.VAR_CALLER_ID,
-        //            r.VAR_CHANNEL_ID,
-        //            r.VAR_WAIT_TIME,
-        //            r.VAR_MAXRETRIES,
-        //            r.VAR_RETRYTIME,
-        //            r.VAR_EXTENSION,
-        //            r.VAR_STATUS
-        //        );
-        //    }
-
-        //    bulk.WriteToServer(table);
-        //}
-        #endregion
-
+      
+        //new working
+       
         [HttpPost("outdial")]
-        public async Task<IActionResult> UploadFile(
-    [FromForm] IFormFile file,
-    [FromForm] string campaign_id)
+        public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string campaign_id)
         {
+            // ============================================================
+            // 1. VALIDATE FILE
+            // ============================================================
+
             if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded!");
-
-            TimeSpan campaignStartTime;
-
-            using (SqlConnection con = new SqlConnection(_dbConnection))
             {
-                await con.OpenAsync();
-
-                using SqlCommand cmd = new SqlCommand(
-                    @"SELECT VAR_CAMPAIGN_START_TIME
-              FROM TBL_CAMPAIGN_MASTER_V2
-              WHERE VAR_CAMPAIGN_ID = @CampaignId", con);
-
-                cmd.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaign_id;
-
-                object result = await cmd.ExecuteScalarAsync();
-
-                if (result == null || result == DBNull.Value)
-                    return BadRequest("Invalid Campaign ID");
-
-                campaignStartTime = (TimeSpan)result;
+                return BadRequest(new
+                {
+                    message = "No file uploaded!"
+                });
             }
 
-            Directory.CreateDirectory(UploadFolder);
-            string filePath = Path.Combine(UploadFolder, file.FileName);
+            // ============================================================
+            // 2. VALIDATE CAMPAIGN ID
+            // ============================================================
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-                await file.CopyToAsync(stream);
-
-            var rows = FileDataReader.ReadTable(filePath).ToList();
-            if (rows.Count <= 1)
-                return BadRequest("No data rows found");
-
-            ConcurrentBag<TBL_CAMPAIGN_DETAILS> records = new();
-
-            Parallel.ForEach(rows.Skip(1), row =>
+            if (!int.TryParse(campaign_id, out int campaignId))
             {
-                if (row.Length < 2) return;
-
-                string callerId = row[0]?.ToString()?.Trim();
-                string extension = row[1]?.ToString()?.Trim();
-
-                if (string.IsNullOrEmpty(callerId) || string.IsNullOrEmpty(extension))
-                    return;
-
-                records.Add(new TBL_CAMPAIGN_DETAILS
+                return BadRequest(new
                 {
-                    VAR_CAMPAIGN_ID = campaign_id,
-                    VAR_CAMPAIGN_START_TIME = campaignStartTime,
-                    VAR_CALLER_ID = callerId,
-                    VAR_CHANNEL_ID = callerId,
-                    VAR_WAIT_TIME = 30,
-                    VAR_MAXRETRIES = 0,
-                    VAR_RETRYTIME = 0,
-                    VAR_EXTENSION = extension,
-                    VAR_STATUS = "PENDING"
+                    message = "Invalid Campaign ID"
                 });
-            });
+            }
 
-            BulkInsert(records.ToList());
+            // ============================================================
+            // 3. VALIDATE DATABASE CONNECTION
+            // ============================================================
+
+            if (string.IsNullOrWhiteSpace(_dbConnection))
+            {
+                return StatusCode(500, new
+                {
+                    message = "Database connection string 'dbcon' not found."
+                });
+            }
+
+            // ============================================================
+            // 4. CAMPAIGN VALUES
+            // ============================================================
+
+            string campaignName = string.Empty;
+            string dnisExtension = string.Empty;
+
+            int callDurationLimit = 0;
+            int retryAttempts = 0;
+            int retryIntervals = 0;
+
+            // ============================================================
+            // 5. GET CAMPAIGN DETAILS
+            // ============================================================
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+
+                    const string query = @"
+        SELECT
+            VAR_CAMPAIGN_NAME,
+            VAR_CALL_DURATION_LIMIT,
+            VAR_RETRY_ATTEMPTS,
+            VAR_RETRY_INTERVALS
+        FROM TBL_CAMPAIGN_MASTER_V2
+        WHERE VAR_CAMPAIGN_ID = @CAMPAIGN_ID";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.Add(
+                            "@CAMPAIGN_ID",
+                            SqlDbType.Int).Value = campaignId;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (!reader.Read())
+                            {
+                                return BadRequest(new
+                                {
+                                    message = "Campaign ID not found.",
+                                    campaignId = campaignId
+                                });
+                            }
+
+                            // =================================================
+                            // CAMPAIGN NAME
+                            // =================================================
+
+                            campaignName =
+                                reader["VAR_CAMPAIGN_NAME"] == DBNull.Value
+                                    ? string.Empty
+                                    : reader["VAR_CAMPAIGN_NAME"]
+                                        .ToString()
+                                        ?.Trim() ?? "";
+
+                            // =================================================
+                            // CALL DURATION LIMIT
+                            // =================================================
+
+                            if (reader["VAR_CALL_DURATION_LIMIT"] != DBNull.Value)
+                            {
+                                int.TryParse(
+                                    reader["VAR_CALL_DURATION_LIMIT"].ToString(),
+                                    out callDurationLimit);
+                            }
+
+                            // =================================================
+                            // RETRY ATTEMPTS
+                            // =================================================
+
+                            if (reader["VAR_RETRY_ATTEMPTS"] != DBNull.Value)
+                            {
+                                int.TryParse(
+                                    reader["VAR_RETRY_ATTEMPTS"].ToString(),
+                                    out retryAttempts);
+                            }
+
+                            // =================================================
+                            // RETRY INTERVALS
+                            // =================================================
+
+                            if (reader["VAR_RETRY_INTERVALS"] != DBNull.Value)
+                            {
+                                int.TryParse(
+                                    reader["VAR_RETRY_INTERVALS"].ToString(),
+                                    out retryIntervals);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Error while getting campaign details.",
+                    error = ex.Message
+                });
+            }
+
+            // ============================================================
+            // 6. VALIDATE CAMPAIGN NAME
+            // ============================================================
+
+            if (string.IsNullOrWhiteSpace(campaignName))
+            {
+                return BadRequest(new
+                {
+                    message = "Campaign name is empty.",
+                    campaignId = campaignId
+                });
+            }
+
+            // ============================================================
+            // 7. GET DNIS EXTENSION FROM tbl_dnis
+            // ============================================================
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+
+                    const string dnisQuery = @"SELECT VAR_DNIS FROM tbl_dnis WHERE VAR_CAMPAIGN_ID = @CAMPAIGN_ID";
+
+                    using (SqlCommand cmd = new SqlCommand(dnisQuery, con))
+                    {
+                        cmd.Parameters.Add(
+                            "@CAMPAIGN_ID",
+                            SqlDbType.Int).Value = campaignId;
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            dnisExtension = result.ToString()?.Trim() ?? "";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Error while getting DNIS extension.",
+                    campaignId = campaignId,
+                    //error = ex.Message
+                    error = "DNIS extension column was not found in the 'tbl_dnis' table."
+                });
+            }
+
+            // ============================================================
+            // 8. VALIDATE DNIS EXTENSION
+            // ============================================================
+
+            if (string.IsNullOrWhiteSpace(dnisExtension))
+            {
+                return BadRequest(new
+                {
+                    message = "DNIS extension is not configured.",
+                    campaignId = campaignId
+                });
+            }
+
+            // ============================================================
+            // 9. DEFAULT VALUES
+            // ============================================================
+
+            if (callDurationLimit <= 0)
+                callDurationLimit = 60;
+
+            if (retryAttempts < 0)
+                retryAttempts = 0;
+
+            if (retryIntervals < 0)
+                retryIntervals = 0;
+
+            // ============================================================
+            // 10. CLEAN CAMPAIGN NAME
+            // ============================================================
+
+            foreach (char invalidChar in Path.GetInvalidFileNameChars())
+            {
+                campaignName = campaignName.Replace(invalidChar, '_');
+            }
+
+            campaignName = campaignName.Trim();
+
+            // ============================================================
+            // 11. CREATE LOCAL UPLOAD FOLDER
+            // ============================================================
+
+            string uploadFolder =
+                Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "Uploads");
+
+            try
+            {
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Unable to create Uploads folder.",
+                    error = ex.Message
+                });
+            }
+
+            // ============================================================
+            // 12. SAVE EXCEL FILE
+            // ============================================================
+
+            string originalFileName = Path.GetFileName(file.FileName);
+
+            string excelFileName =
+                $"{Guid.NewGuid()}_{originalFileName}";
+
+            string excelFilePath =
+                Path.Combine(uploadFolder, excelFileName);
+
+            try
+            {
+                using (FileStream stream = new FileStream(
+                    excelFilePath,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.None,
+                    81920,
+                    FileOptions.SequentialScan))
+                {
+                    file.CopyTo(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Unable to save uploaded Excel file.",
+                    error = ex.Message
+                });
+            }
+
+            // ============================================================
+            // 13. READ EXCEL
+            // ============================================================
+
+            List<string[]> rows;
+
+            try
+            {
+                rows = FileDataReader
+                    .ReadTable(excelFilePath)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                TryDeleteFile(excelFilePath);
+
+                return BadRequest(new
+                {
+                    message = "Unable to read Excel file.",
+                    error = ex.Message
+                });
+            }
+
+            // ============================================================
+            // 14. VALIDATE EXCEL DATA
+            // ============================================================
+
+            if (rows == null || rows.Count <= 1)
+            {
+                TryDeleteFile(excelFilePath);
+
+                return BadRequest(new
+                {
+                    message = "Excel file does not contain data."
+                });
+            }
+
+            // ============================================================
+            // 15. REMOTE DIRECTORY
+            // ============================================================
+
+            //string remoteDirectory =$"/var/spool/asterisk/CallFile/{campaignName}_{campaignId}";
+            string remoteDirectory = $"/var/spool/asterisk/CallFile/Campaign-{campaignId}_{campaignId}";
+
+            // ============================================================
+            // 16. COUNTERS
+            // ============================================================
+
+            int successCount = 0;
+            int failedCount = 0;
+
+            var successFiles = new List<string>();
+            var failedExcelFiles = new List<string>();
+            var failedUploadFiles = new List<string>();
+
+            // ============================================================
+            // 17. DELETE DUPLICATE FILES
+            // ============================================================
+
+            try
+            {
+                DeleteDuplicateSftpFiles(
+                    remoteDirectory,
+                    rows);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"Duplicate cleanup error: {ex.Message}");
+            }
+
+            // ============================================================
+            // 18. UPLOAD CALL FILES
+            // ============================================================
+
+            try
+            {
+                UploadExcelRowsToSftp(
+                    rows,
+                    campaignId,
+                    campaignName,
+                    dnisExtension,
+                    remoteDirectory,
+                    callDurationLimit,
+                    retryAttempts,
+                    retryIntervals,
+                    successFiles,
+                    failedExcelFiles,
+                    failedUploadFiles,
+                    ref successCount,
+                    ref failedCount);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"SFTP processing error: {ex.Message}");
+
+                failedCount++;
+
+                failedUploadFiles.Add(
+                    $"SFTP ERROR: {ex.Message}");
+            }
+            #region
+            // ============================================================
+            // 19. UPDATE CAMPAIGN MASTER
+            // ============================================================
+
+            //    bool campaignUpdated = false;
+
+            //    try
+            //    {
+            //        using (SqlConnection con =  new SqlConnection(_dbConnection))
+            //        {
+            //            con.Open();
+
+            //            const string updateQuery = @"
+            //UPDATE TBL_CAMPAIGN_MASTER_V2
+            //SET
+            //    VAR_DESTINATION_FILE_PATH = @DESTINATION_FILE_PATH,
+            //    VAR_SOURCE_FILR_PATH      = @VAR_SOURCE_FILR_PATH,
+            //    VAR_STATUS                = 'ACTIVE',
+            //    VAR_SUCCESS_FILE_COUNT    = @SUCCESS_COUNT,
+            //    VAR_FAILED_FILE_COUNT     = @FAILED_COUNT,
+            //WHERE VAR_CAMPAIGN_ID = @CAMPAIGN_ID";
+
+            //            using (SqlCommand cmd =
+            //                   new SqlCommand(updateQuery, con))
+            //            {
+            //                cmd.Parameters.Add(
+            //                    "@DESTINATION_FILE_PATH",
+            //                    SqlDbType.NVarChar,
+            //                    500).Value = remoteDirectory;
+
+            //                cmd.Parameters.Add(
+            //                    "@VAR_SOURCE_FILR_PATH",
+            //                    SqlDbType.NVarChar,
+            //                    500).Value = uploadFolder;
+
+            //                cmd.Parameters.Add(
+            //                    "@SUCCESS_COUNT",
+            //                    SqlDbType.Int).Value = successCount;
+
+            //                cmd.Parameters.Add(
+            //                    "@FAILED_COUNT",
+            //                    SqlDbType.Int).Value = failedCount;
+
+
+            //                cmd.Parameters.Add(
+            //                    "@CAMPAIGN_ID",
+            //                    SqlDbType.Int).Value = campaignId;
+
+            //                int rowsAffected =
+            //                    cmd.ExecuteNonQuery();
+
+            //                campaignUpdated =
+            //                    rowsAffected > 0;
+            //            }
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(
+            //            $"Campaign master update failed: {ex.Message}");
+            //    }
+            #endregion
+
+
+            // ============================================================
+            // 19. UPDATE CAMPAIGN MASTER
+            // ============================================================
+
+            bool campaignUpdated = false;
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_dbConnection))
+                {
+                    con.Open();
+
+                    const string updateQuery = @"
+UPDATE TBL_CAMPAIGN_MASTER_V2
+SET
+    VAR_DESTINATION_FILE_PATH = @DESTINATION_FILE_PATH,
+    VAR_SOURCE_FILR_PATH      = @VAR_SOURCE_FILR_PATH,
+    VAR_STATUS                = 'ACTIVE',
+    VAR_SUCCESS_FILE_COUNT    = @SUCCESS_COUNT,
+    VAR_FAILED_FILE_COUNT     = @FAILED_COUNT
+
+WHERE VAR_CAMPAIGN_ID = @CAMPAIGN_ID";
+
+                    using (SqlCommand cmd = new SqlCommand(updateQuery, con))
+                    {
+                        cmd.Parameters.Add(
+                            "@DESTINATION_FILE_PATH",
+                            SqlDbType.NVarChar, 500).Value = remoteDirectory;
+
+                        cmd.Parameters.Add(
+                            "@VAR_SOURCE_FILR_PATH",
+                            SqlDbType.NVarChar, 500).Value = uploadFolder;
+
+                        cmd.Parameters.Add(
+                            "@SUCCESS_COUNT",
+                            SqlDbType.Int).Value = successCount;
+
+                        cmd.Parameters.Add(
+                            "@FAILED_COUNT",
+                            SqlDbType.Int).Value = failedCount;
+
+                        cmd.Parameters.Add(
+                            "@CAMPAIGN_ID",
+                            SqlDbType.Int).Value = campaignId;
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        campaignUpdated = rowsAffected > 0;
+
+                        // ✅ Add this to debug if still 0 rows affected
+                        Console.WriteLine($"Update rows affected: {rowsAffected}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // ✅ Previously this silently swallowed the error
+                Console.WriteLine($"Campaign master update failed: {ex.Message}");
+            }
+
+            // ============================================================
+            // 20. DELETE LOCAL EXCEL
+            // ============================================================
+
+            TryDeleteFile(excelFilePath);
+
+            // ============================================================
+            // 21. RESPONSE
+            // ============================================================
 
             return Ok(new
             {
-                Message = "Outdial Call Successfully Created",
-                CampaignId = campaign_id,
-                TotalInserted = records.Count
+                campaignId = campaignId,
+                campaignName = campaignName,
+                dnisExtension = dnisExtension,
+                remoteDirectory = remoteDirectory,
+                campaignUpdated = campaignUpdated,
+                successCount = successCount,
+                failedCount = failedCount,
+                successFiles = successFiles,
+                failedFiles = failedExcelFiles,
+                failedUploadFiles = failedUploadFiles
             });
         }
 
-
-        private void BulkInsert(List<TBL_CAMPAIGN_DETAILS> data)
+        private void DeleteDuplicateSftpFiles(string remoteDirectory, List<string[]> rows)
         {
-            using var con = new SqlConnection(_dbConnection);
-            con.Open();
+            const string host = "192.168.5.61";
+            const int port = 22;
+            const string username = "root";
+            const string password = "Kaizen^%$#@!";
 
-            using var bulk = new SqlBulkCopy(con)
+            // ============================================================
+            // BUILD PHONE NUMBER SET FROM EXCEL
+            // ============================================================
+
+            var incomingPhoneNumbers =
+                new HashSet<string>(
+                    rows.Skip(1)
+                        .Where(arr =>
+                            arr != null &&
+                            arr.Length >= 1)
+                        .Select(arr =>
+                            (arr[0]?.Trim() ?? "")
+                                .Replace(" ", "")
+                                .Replace("-", "")
+                                .Replace("(", "")
+                                .Replace(")", ""))
+                        .Where(p =>
+                            !string.IsNullOrWhiteSpace(p)),
+                    StringComparer.OrdinalIgnoreCase);
+
+            if (incomingPhoneNumbers.Count == 0)
+                return;
+
+            // ============================================================
+            // CONNECT SFTP
+            // ============================================================
+
+            using (var sftp =
+                   new SftpClient(
+                       host,
+                       port,
+                       username,
+                       password))
             {
-                DestinationTableName = "TBL_CAMPAIGNDETAILS"
-            };
+                sftp.Connect();
 
-            bulk.ColumnMappings.Add("VAR_CAMPAIGN_ID", "VAR_CAMPAIGN_ID");
-            bulk.ColumnMappings.Add("VAR_CAMPAIGN_START_TIME", "VAR_CAMPAIGN_START_TIME");
-            bulk.ColumnMappings.Add("VAR_CALLER_ID", "VAR_CALLER_ID");
-            bulk.ColumnMappings.Add("VAR_CHANNEL_ID", "VAR_CHANNEL_ID");
-            bulk.ColumnMappings.Add("VAR_WAIT_TIME", "VAR_WAIT_TIME");
-            bulk.ColumnMappings.Add("VAR_MAXRETRIES", "VAR_MAXRETRIES");
-            bulk.ColumnMappings.Add("VAR_RETRYTIME", "VAR_RETRYTIME");
-            bulk.ColumnMappings.Add("VAR_EXTENSION", "VAR_EXTENSION");
-            bulk.ColumnMappings.Add("VAR_STATUS", "VAR_STATUS");
+                if (!sftp.IsConnected)
+                {
+                    throw new Exception(
+                        "Unable to connect to SFTP server for duplicate cleanup.");
+                }
 
-            var table = new DataTable();
+                // ========================================================
+                // CHECK REMOTE DIRECTORY
+                // ========================================================
 
-            table.Columns.Add("VAR_CAMPAIGN_ID", typeof(int));
-            table.Columns.Add("VAR_CAMPAIGN_START_TIME", typeof(TimeSpan));
-            table.Columns.Add("VAR_CALLER_ID", typeof(string));
-            table.Columns.Add("VAR_CHANNEL_ID", typeof(string));
-            table.Columns.Add("VAR_WAIT_TIME", typeof(int));
-            table.Columns.Add("VAR_MAXRETRIES", typeof(int));
-            table.Columns.Add("VAR_RETRYTIME", typeof(int));
-            table.Columns.Add("VAR_EXTENSION", typeof(string));
-            table.Columns.Add("VAR_STATUS", typeof(string));
+                if (!sftp.Exists(remoteDirectory))
+                {
+                    sftp.Disconnect();
+                    return;
+                }
 
-            foreach (var r in data)
+                // ========================================================
+                // GET REMOTE CALL FILES
+                // ========================================================
+
+                var remoteFiles =
+                    sftp.ListDirectory(remoteDirectory)
+                        .Where(f =>
+                            f.IsRegularFile &&
+                            f.Name.EndsWith(
+                                ".call",
+                                StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                if (remoteFiles.Count == 0)
+                {
+                    sftp.Disconnect();
+                    return;
+                }
+
+                // ========================================================
+                // DELETE DUPLICATES
+                // ========================================================
+
+                foreach (var remoteFile in remoteFiles)
+                {
+                    try
+                    {
+                        string fileNameWithoutExt =
+                            Path.GetFileNameWithoutExtension(
+                                remoteFile.Name);
+
+                        // Format:
+                        // phone_campaignId_random.call
+
+                        string[] parts =
+                            fileNameWithoutExt.Split('_');
+
+                        if (parts.Length < 1)
+                            continue;
+
+                        string filePhoneNumber =
+                            parts[0];
+
+                        if (incomingPhoneNumbers.Contains(
+                            filePhoneNumber))
+                        {
+                            string remoteFilePath =
+                                $"{remoteDirectory}/{remoteFile.Name}";
+
+                            sftp.DeleteFile(
+                                remoteFilePath);
+
+                            Console.WriteLine(
+                                $"Deleted duplicate: {remoteFile.Name}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(
+                            $"Failed to delete {remoteFile.Name}: {ex.Message}");
+                    }
+                }
+
+                // ========================================================
+                // DISCONNECT
+                // ========================================================
+
+                if (sftp.IsConnected)
+                {
+                    sftp.Disconnect();
+                }
+            }
+        }
+        private void UploadExcelRowsToSftp(List<string[]> rows, int campaignId, string campaignName, string dnisExtension,
+            string remoteDirectory, int callDurationLimit, int retryAttempts, int retryIntervals,
+            List<string> successFiles, List<string> failedExcelFiles, List<string> failedUploadFiles,
+            ref int successCount, ref int failedCount)
+        {
+            // ============================================================
+            // VALIDATION
+            // ============================================================
+
+            if (rows == null || rows.Count <= 1)
+                return;
+
+            if (string.IsNullOrWhiteSpace(dnisExtension))
             {
-                table.Rows.Add(
-                    r.VAR_CAMPAIGN_ID,
-                    r.VAR_CAMPAIGN_START_TIME,
-                    r.VAR_CALLER_ID,
-                    r.VAR_CHANNEL_ID,
-                    r.VAR_WAIT_TIME,
-                    r.VAR_MAXRETRIES,
-                    r.VAR_RETRYTIME,
-                    r.VAR_EXTENSION,
-                    r.VAR_STATUS
-                );
+                throw new Exception(
+                    "DNIS extension is not configured.");
             }
 
-            bulk.WriteToServer(table);
+            // ============================================================
+            // SFTP DETAILS
+            // ============================================================
+
+            const string host = "192.168.5.61";
+            const int port = 22;
+            const string username = "root";
+            const string password = "Kaizen^%$#@!";
+
+            // ============================================================
+            // CONNECT SFTP
+            // ============================================================
+
+            using (var sftp =
+                   new SftpClient(
+                       host,
+                       port,
+                       username,
+                       password))
+            {
+                sftp.Connect();
+
+                if (!sftp.IsConnected)
+                {
+                    throw new Exception(
+                        "Unable to connect to SFTP server.");
+                }
+
+                // ========================================================
+                // CREATE REMOTE DIRECTORY
+                // ========================================================
+
+                if (!sftp.Exists(remoteDirectory))
+                {
+                    sftp.CreateDirectory(
+                        remoteDirectory);
+                }
+
+                // ========================================================
+                // PROCESS EXCEL ROWS
+                // ========================================================
+
+                foreach (string[] arr in rows.Skip(1))
+                {
+                    string phoneNumber = "";
+                    string extension = "";
+
+                    try
+                    {
+                        // =================================================
+                        // VALIDATE ROW
+                        // =================================================
+
+                        if (arr == null || arr.Length < 2)
+                        {
+                            failedCount++;
+
+                            failedExcelFiles.Add(
+                                "Invalid row: Phone number or Extension missing.");
+
+                            continue;
+                        }
+
+                        // =================================================
+                        // GET PHONE NUMBER
+                        // =================================================
+
+                        phoneNumber =
+                            arr[0]?.Trim() ?? "";
+
+                        phoneNumber =
+                            phoneNumber
+                                .Replace(" ", "")
+                                .Replace("-", "")
+                                .Replace("(", "")
+                                .Replace(")", "");
+
+                        // =================================================
+                        // GET EXTENSION
+                        // =================================================
+
+                        extension =
+                            arr[1]?.Trim() ?? "";
+
+                        // =================================================
+                        // PHONE NUMBER VALIDATION
+                        // =================================================
+
+                        if (string.IsNullOrWhiteSpace(phoneNumber))
+                        {
+                            failedCount++;
+
+                            failedExcelFiles.Add(
+                                "Empty phone number.");
+
+                            continue;
+                        }
+
+                        if (!phoneNumber.All(char.IsDigit))
+                        {
+                            failedCount++;
+
+                            failedExcelFiles.Add(
+                                $"{phoneNumber} - Invalid phone number.");
+
+                            continue;
+                        }
+
+                        if (phoneNumber.Length != 11)
+                        {
+                            failedCount++;
+
+                            failedExcelFiles.Add(
+                                $"{phoneNumber} - Phone number must be 11 digits.");
+
+                            continue;
+                        }
+
+                        if (!phoneNumber.StartsWith("0"))
+                        {
+                            failedCount++;
+
+                            failedExcelFiles.Add(
+                                $"{phoneNumber} - Phone number must start with 0.");
+
+                            continue;
+                        }
+
+                        // =================================================
+                        // EXTENSION VALIDATION
+                        // =================================================
+
+                        if (string.IsNullOrWhiteSpace(extension))
+                        {
+                            failedCount++;
+
+                            failedExcelFiles.Add(
+                                $"{phoneNumber} - Extension is empty.");
+
+                            continue;
+                        }
+
+                        // =================================================
+                        // DNIS EXTENSION CHECK
+                        // =================================================
+
+                        if (!string.Equals(
+                                extension.Trim(),
+                                dnisExtension.Trim(),
+                                StringComparison.OrdinalIgnoreCase))
+                        {
+                            failedCount++;
+
+                            failedExcelFiles.Add(
+                                $"{phoneNumber} - Extension mismatch. " +
+                                $"Excel Extension: {extension}, " +
+                                $"DNIS Extension: {dnisExtension}");
+
+                            // IMPORTANT:
+                            // No call file will be created.
+                            continue;
+                        }
+
+                        // =================================================
+                        // CREATE RANDOM NUMBER
+                        // =================================================
+
+                        string randomNumber =
+                            Random.Shared
+                                .Next(100000, 999999)
+                                .ToString();
+
+                        // =================================================
+                        // CALL FILE NAME
+                        // =================================================
+
+                        string callFileName =
+                            $"{phoneNumber}_{campaignId}_{randomNumber}.call";
+
+                        // =================================================
+                        // LOCAL TEMP FILE
+                        // =================================================
+
+                        string tempCallFile =
+                            Path.Combine(
+                                Path.GetTempPath(),
+                                callFileName);
+
+                        // =================================================
+                        // CREATE CALL FILE CONTENT
+                        // =================================================
+
+                        string callFileContent =
+                            $"Channel: PJSIP/{phoneNumber}@out{Environment.NewLine}" +
+                            $"WaitTime: {callDurationLimit}{Environment.NewLine}" +
+                            $"MaxRetries: {retryAttempts}{Environment.NewLine}" +
+                            $"RetryTime: {retryIntervals}{Environment.NewLine}" +
+                            $"Context: from-interval{Environment.NewLine}" +
+                            $"Extension: {extension}{Environment.NewLine}" +
+                            $"Priority: 1{Environment.NewLine}" +
+                            $"Setvar: caller_id=out{phoneNumber}{Environment.NewLine}" +
+                            $"Setvar: Campaign={campaignId}{Environment.NewLine}" +
+                            $"Setvar: Campaign_Name={campaignName}{Environment.NewLine}" +
+                            $"Archive: yes{Environment.NewLine}";
+
+                        // =================================================
+                        // WRITE LOCAL CALL FILE
+                        // =================================================
+
+                        System.IO.File.WriteAllText(
+                            tempCallFile,
+                            callFileContent);
+
+                        // =================================================
+                        // REMOTE FILE PATH
+                        // =================================================
+
+                        string remoteFilePath =
+                            $"{remoteDirectory}/{callFileName}";
+
+                        // =================================================
+                        // UPLOAD TO SFTP
+                        // =================================================
+
+                        try
+                        {
+                            using (FileStream fs =
+                                   new FileStream(
+                                       tempCallFile,
+                                       FileMode.Open,
+                                       FileAccess.Read,
+                                       FileShare.Read))
+                            {
+                                sftp.UploadFile(
+                                    fs,
+                                    remoteFilePath);
+                            }
+
+                            successCount++;
+
+                            successFiles.Add(
+                                callFileName);
+                        }
+                        catch (Exception uploadEx)
+                        {
+                            failedCount++;
+
+                            failedUploadFiles.Add(
+                                $"{callFileName} - {uploadEx.Message}");
+                        }
+                        finally
+                        {
+                            // =============================================
+                            // DELETE TEMP FILE
+                            // =============================================
+
+                            TryDeleteFile(
+                                tempCallFile);
+                        }
+                    }
+                    catch (Exception rowEx)
+                    {
+                        failedCount++;
+
+                        string errorFileName =
+                            !string.IsNullOrWhiteSpace(phoneNumber)
+                                ? phoneNumber
+                                : "UNKNOWN";
+
+                        failedUploadFiles.Add(
+                            $"{errorFileName} - {rowEx.Message}");
+                    }
+                }
+
+                // ========================================================
+                // DISCONNECT
+                // ========================================================
+
+                if (sftp.IsConnected)
+                {
+                    sftp.Disconnect();
+                }
+            }
         }
 
+        private bool UploadToSftp(string localFilePath, string remoteDirectory)
+        {
+            const string host = "192.168.5.61";
+            const int port = 22;
+            const string username = "root";
+            const string password = "Kaizen^%$#@!";
 
+            try
+            {
+                using (var sftp =
+                       new SftpClient(
+                           host,
+                           port,
+                           username,
+                           password))
+                {
+                    sftp.Connect();
 
+                    if (!sftp.IsConnected)
+                        return false;
 
+                    if (!sftp.Exists(remoteDirectory))
+                    {
+                        sftp.CreateDirectory(
+                            remoteDirectory);
+                    }
+
+                    string fileName =
+                        Path.GetFileName(
+                            localFilePath);
+
+                    string remoteFilePath =
+                        $"{remoteDirectory}/{fileName}";
+
+                    using (FileStream fs =
+                           new FileStream(
+                               localFilePath,
+                               FileMode.Open,
+                               FileAccess.Read))
+                    {
+                        sftp.UploadFile(
+                            fs,
+                            remoteFilePath);
+                    }
+
+                    sftp.Disconnect();
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"SFTP Upload Error: {ex.Message}");
+
+                return false;
+            }
+        }
+
+        private void TryDeleteFile(string filePath)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(filePath) &&
+                    System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(
+                        filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"Unable to delete file: {ex.Message}");
+            }
+        }
 
 
         [HttpGet("callactivity")]
@@ -1881,7 +3032,6 @@ namespace PushAPIContractNumber
 
         }
 
-
         [HttpGet("PhoneNumber")]
         public IActionResult Phone_Number([FromQuery] string phoneNumber)
         {
@@ -2178,7 +3328,6 @@ namespace PushAPIContractNumber
                     error = ex.Message
                 });
             }
-
         }
     }
 }
